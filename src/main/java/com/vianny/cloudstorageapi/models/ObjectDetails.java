@@ -32,7 +32,6 @@ public class ObjectDetails {
     }
 
     public ObjectDetails() {
-
     }
 
     public int getId() {
