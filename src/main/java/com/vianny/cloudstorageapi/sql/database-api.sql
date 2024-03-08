@@ -7,12 +7,12 @@ CREATE TABLE account (
                          size_storage INTEGER
 );
 
-CREATE TABLE details_file (
+CREATE TABLE details_object (
                               id SERIAL PRIMARY KEY,
                               account_id INTEGER,
-                              file_name text not null,
-                              file_size INTEGER not null,
-                              file_location text not null,
+                              object_name text not null,
+                              object_size INTEGER not null,
+                              object_location text not null,
                               upload_date timestamp not null,
                               FOREIGN KEY (account_id) REFERENCES account(id)
 );

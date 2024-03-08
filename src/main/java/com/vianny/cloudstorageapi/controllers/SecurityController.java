@@ -64,6 +64,8 @@ public class SecurityController {
             account.setLogin(signUpRequest.getLogin());
             account.setPassword(hashed);
             accountRepository.save(account);
+
+
         }
         catch (BadCredentialsException e) {
             throw new UnauthorizedRequiredException(HttpStatus.UNAUTHORIZED, "Регистрация не удалась");
