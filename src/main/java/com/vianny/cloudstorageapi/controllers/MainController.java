@@ -41,7 +41,6 @@ public class MainController {
     @PostMapping("/upload")
     public ResponseEntity<ResponseMessage> uploadFile(@RequestParam MultipartFile object, @RequestParam String directory, Principal principal) {
         try {
-            int i = 4/0;
             objectService.saveObject(object, directory, principal.getName());
 
             String objectName = directory + "/" + object.getOriginalFilename();
