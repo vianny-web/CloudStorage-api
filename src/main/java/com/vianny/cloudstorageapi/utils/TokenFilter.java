@@ -39,7 +39,8 @@ public class TokenFilter extends OncePerRequestFilter {
                     username = jwtCore.getNameFromJwt(jwt);
                 }
                 catch (ExpiredJwtException e) {
-                    response.sendError(HttpServletResponse.SC_GATEWAY_TIMEOUT, "Токен аутентификации истек");
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Токен аутентификации истек");
+                    return;
                 }
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     userDetails = userDetailsService.loadUserByUsername(username);
@@ -47,10 +48,10 @@ public class TokenFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
             }
+            filterChain.doFilter(request, response);
         }
-        catch (Exception e) {
-            // TODO
+        catch (ExpiredJwtException e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error: " + e.getMessage());
         }
-        filterChain.doFilter(request, response);
     }
 }
