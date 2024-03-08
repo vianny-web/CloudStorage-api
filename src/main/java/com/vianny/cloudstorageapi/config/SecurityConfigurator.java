@@ -1,6 +1,5 @@
 package com.vianny.cloudstorageapi.config;
 
-import com.vianny.cloudstorageapi.services.AccountService;
 import com.vianny.cloudstorageapi.utils.TokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -35,7 +34,6 @@ public class SecurityConfigurator {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();

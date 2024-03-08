@@ -8,7 +8,11 @@ import com.vianny.cloudstorageapi.exception.requiredException.UnauthorizedRequir
 import com.vianny.cloudstorageapi.exception.requiredException.UnregisteredRequiredException;
 import com.vianny.cloudstorageapi.models.Account;
 import com.vianny.cloudstorageapi.repositories.AccountRepository;
+import com.vianny.cloudstorageapi.config.MinioConfig;
+import com.vianny.cloudstorageapi.services.MinioService;
 import com.vianny.cloudstorageapi.utils.JwtCore;
+import io.minio.MakeBucketArgs;
+import io.minio.errors.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +27,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
 @RestController
 @RequestMapping("/authAccount")
 public class SecurityController {
@@ -31,24 +39,27 @@ public class SecurityController {
     private AuthenticationManager authenticationManager;
     private JwtCore jwtCore;
 
+    private MinioService minioService;
+
     @Autowired
     public void setUserRepository(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
     }
-
     @Autowired
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
-
     @Autowired
     public void setAuthenticationManager(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
-
     @Autowired
     public void setJwtCore(JwtCore jwtCore) {
         this.jwtCore = jwtCore;
+    }
+    @Autowired
+    public void setMinioService(MinioService minioService) {
+        this.minioService = minioService;
     }
 
     @PostMapping("/signUp")
@@ -65,7 +76,14 @@ public class SecurityController {
             account.setPassword(hashed);
             accountRepository.save(account);
 
-
+            try {
+                minioService.createBucket(signUpRequest.getLogin());
+            }
+            catch (ServerException | InsufficientDataException | ErrorResponseException | IOException |
+                     NoSuchAlgorithmException | InvalidKeyException | InvalidResponseException | XmlParserException |
+                     InternalException e) {
+                // TODO
+            }
         }
         catch (BadCredentialsException e) {
             throw new UnauthorizedRequiredException(HttpStatus.UNAUTHORIZED, "Регистрация не удалась");
@@ -82,6 +100,8 @@ public class SecurityController {
             authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(singInRequest.getLogin(),
                             singInRequest.getPassword()));
+
+
         }
         catch (BadCredentialsException e) {
             throw new UnauthorizedRequiredException(HttpStatus.UNAUTHORIZED, "Аутентификация не удалась");
