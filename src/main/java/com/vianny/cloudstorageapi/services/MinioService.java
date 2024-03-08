@@ -30,20 +30,4 @@ public class MinioService {
                         .build()
         );
     }
-
-    public void uploadFile(MultipartFile file, String username, String directory) {
-        try {
-            String objectName = directory + "/" + file.getOriginalFilename();
-
-            InputStream inputStream = file.getInputStream();
-            minioConfig.minioClient().putObject(PutObjectArgs.builder()
-                    .bucket(username)
-                    .object(objectName)
-                    .stream(inputStream, inputStream.available(), -1)
-                    .build());
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
