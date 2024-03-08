@@ -10,7 +10,7 @@ public class ObjectDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
-    private int id;
+    private Long id;
     @Column(name = "object_name")
     private String objectName;
     @Column(name = "object_size")
