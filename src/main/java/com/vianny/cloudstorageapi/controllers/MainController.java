@@ -9,11 +9,5 @@ import java.security.Principal;
 @RestController
 @RequestMapping("/myCloud")
 public class MainController {
-    @GetMapping("/user")
-    public String userAccess(Principal principal) {
-        if (principal == null) {
-            return "null";
-        }
-        return principal.getName();
-    }
+
 }

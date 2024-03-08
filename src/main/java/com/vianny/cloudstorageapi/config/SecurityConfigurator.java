@@ -23,7 +23,6 @@ import org.springframework.web.cors.CorsConfiguration;
 @EnableWebSecurity
 public class SecurityConfigurator {
     private TokenFilter tokenFilter;
-    private AccountService accountService;
 
     public SecurityConfigurator() {}
 
