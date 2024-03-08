@@ -2,6 +2,10 @@ package com.vianny.cloudstorageapi.controllers;
 
 import com.vianny.cloudstorageapi.config.MinioConfig;
 import com.vianny.cloudstorageapi.dto.ResponseMessage;
+import com.vianny.cloudstorageapi.models.Account;
+import com.vianny.cloudstorageapi.models.ObjectDetails;
+import com.vianny.cloudstorageapi.repositories.AccountRepository;
+import com.vianny.cloudstorageapi.services.ObjectService;
 import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
 import io.minio.errors.*;
@@ -16,14 +20,25 @@ import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/myCloud")
 public class MainController {
     private MinioConfig minioConfig;
+    private ObjectService objectService;
+    private AccountRepository accountRepository;
     @Autowired
     public void setMinioConfig(MinioConfig minioConfig) {
         this.minioConfig = minioConfig;
+    }
+    @Autowired
+    public void setObjectService(ObjectService objectService) {
+        this.objectService = objectService;
+    }
+    @Autowired
+    public void setAccountRepository(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
     }
 
     @PostMapping("/upload")
@@ -37,6 +52,9 @@ public class MainController {
                     .object(objectName)
                     .stream(inputStream, inputStream.available(), -1)
                     .build());
+
+            Optional<Account> currentAccount = accountRepository.findUserByLogin(principal.getName());
+            objectService.saveObject(object, directory, currentAccount.orElseThrow());
         }
         catch (Exception e) {
             throw new RuntimeException(e);

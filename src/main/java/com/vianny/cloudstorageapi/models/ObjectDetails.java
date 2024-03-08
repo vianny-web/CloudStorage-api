@@ -2,10 +2,10 @@ package com.vianny.cloudstorageapi.models;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
-@Table
+@Table(name = "details_object")
 public class ObjectDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,13 +18,13 @@ public class ObjectDetails {
     @Column(name = "object_location")
     private String objectLocation;
     @Column(name = "upload_date")
-    private LocalDate uploadDate;
+    private LocalDateTime uploadDate;
 
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "account_id")
     private Account account;
 
-    public ObjectDetails(String objectName, int objectSize, String objectLocation, LocalDate uploadDate) {
+    public ObjectDetails(String objectName, int objectSize, String objectLocation, LocalDateTime uploadDate) {
         this.objectName = objectName;
         this.objectSize = objectSize;
         this.objectLocation = objectLocation;
@@ -66,11 +66,11 @@ public class ObjectDetails {
         this.objectLocation = objectLocation;
     }
 
-    public LocalDate getUploadDate() {
+    public LocalDateTime getUploadDate() {
         return uploadDate;
     }
 
-    public void setUploadDate(LocalDate uploadDate) {
+    public void setUploadDate(LocalDateTime uploadDate) {
         this.uploadDate = uploadDate;
     }
 
