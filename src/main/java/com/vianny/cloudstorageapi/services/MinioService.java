@@ -14,12 +14,6 @@ import java.security.NoSuchAlgorithmException;
 public class MinioService {
     private MinioConfig minioConfig;
 
-    private final ObjectDetailsService objectDetailsService;
-    @Autowired
-    public MinioService(ObjectDetailsService objectDetailsService) {
-        this.objectDetailsService = objectDetailsService;
-    }
-
     @Autowired
     public void setMinioConfig(MinioConfig minioConfig) {
         this.minioConfig = minioConfig;
@@ -32,9 +26,6 @@ public class MinioService {
                         .bucket(username)
                         .build()
         );
-    }
-    public void createFolder(String username, String folderName, String directory) {
-
     }
 
 
