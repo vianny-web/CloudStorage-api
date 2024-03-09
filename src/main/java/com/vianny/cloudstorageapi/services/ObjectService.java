@@ -50,7 +50,6 @@ public class ObjectService {
             throw new NotFoundRequiredException("Файл с таким именем не найден");
         }
         else {
-            System.out.println("directory: " + directory);
             objectRepository.deleteObjectDetailsByObjectLocation(directory);
         }
     }

@@ -59,14 +59,13 @@ public class MainController {
         return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{directory}")
-    public ResponseEntity<ResponseMessage> deleteFile(@PathVariable("directory") String directory, Principal principal) {
-        System.out.println(directory);
+    @DeleteMapping("/")
+    public ResponseEntity<ResponseMessage> deleteFile(@RequestParam("path") String path, Principal principal) {
         try {
-            objectService.deleteObject(directory, principal.getName());
+            objectService.deleteObject(path, principal.getName());
             RemoveObjectArgs removeObjectArgs = RemoveObjectArgs.builder()
                     .bucket(principal.getName())
-                    .object(directory)
+                    .object(path)
                     .build();
             minioConfig.minioClient().removeObject(removeObjectArgs);
 
