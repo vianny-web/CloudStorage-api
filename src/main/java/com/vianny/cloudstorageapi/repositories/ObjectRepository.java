@@ -8,8 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 public interface ObjectRepository extends JpaRepository<ObjectDetails, Long> {
     ObjectDetails findByObjectLocationAndAccount_Login(String objectLocation, String login);
 
-    void deleteByObjectLocation(String objectLocation);
-
     @Modifying
     @Query("DELETE FROM ObjectDetails od WHERE od.objectLocation = :objectLocation")
     void deleteObjectDetailsByObjectLocation(String objectLocation);
