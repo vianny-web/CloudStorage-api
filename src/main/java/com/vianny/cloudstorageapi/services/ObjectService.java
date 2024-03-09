@@ -54,7 +54,7 @@ public class ObjectService {
             throw new NotFoundRequiredException("Файл с таким именем не найден");
         }
         addSizeStorage(login, path);
-        objectRepository.deleteObjectDetailsByObjectLocation(path);
+        objectRepository.deleteObjectDetailsByObjectLocation(path, login);
     }
 
     @Transactional

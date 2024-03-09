@@ -9,6 +9,6 @@ public interface ObjectRepository extends JpaRepository<ObjectDetails, Long> {
     ObjectDetails findByObjectLocationAndAccount_Login(String objectLocation, String login);
 
     @Modifying
-    @Query("DELETE FROM ObjectDetails od WHERE od.objectLocation = :objectLocation")
-    void deleteObjectDetailsByObjectLocation(String objectLocation);
+    @Query("DELETE FROM ObjectDetails od WHERE od.objectLocation = :objectLocation AND od.account.login = :login")
+    void deleteObjectDetailsByObjectLocation(String objectLocation, String login);
 }
