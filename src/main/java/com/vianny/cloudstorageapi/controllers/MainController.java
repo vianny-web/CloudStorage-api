@@ -2,10 +2,7 @@ package com.vianny.cloudstorageapi.controllers;
 
 import com.vianny.cloudstorageapi.config.MinioConfig;
 import com.vianny.cloudstorageapi.dto.ResponseMessage;
-import com.vianny.cloudstorageapi.exception.requiredException.ConflictRequiredException;
-import com.vianny.cloudstorageapi.models.Account;
-import com.vianny.cloudstorageapi.models.ObjectDetails;
-import com.vianny.cloudstorageapi.repositories.AccountRepository;
+import com.vianny.cloudstorageapi.services.AccountService;
 import com.vianny.cloudstorageapi.services.ObjectService;
 import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
@@ -22,13 +19,13 @@ import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/myCloud")
 public class MainController {
     private MinioConfig minioConfig;
     private ObjectService objectService;
+    private AccountService accountService;
     @Autowired
     public void setMinioConfig(MinioConfig minioConfig) {
         this.minioConfig = minioConfig;
@@ -37,12 +34,17 @@ public class MainController {
     public void setObjectService(ObjectService objectService) {
         this.objectService = objectService;
     }
+    @Autowired
+    public void setAccountService(AccountService accountService) {
+        this.accountService = accountService;
+    }
 
     @PostMapping("/upload")
     public ResponseEntity<ResponseMessage> uploadFile(@RequestParam MultipartFile object, @RequestParam String directory, Principal principal) {
         try {
             String fullDirectory = directory + object.getOriginalFilename();
             objectService.saveObject(object, fullDirectory, principal.getName());
+            accountService.reduceSizeStorage(principal.getName(), (int) object.getSize());
 
             InputStream inputStream = object.getInputStream();
             minioConfig.minioClient().putObject(PutObjectArgs.builder()

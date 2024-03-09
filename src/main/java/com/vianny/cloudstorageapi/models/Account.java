@@ -17,7 +17,7 @@ public class Account {
     @Column
     private String password;
     @Column
-    private final int size_storage = 1073741824;
+    private int size_storage = 1073741824;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private List<ObjectDetails> objectDetails;
@@ -56,6 +56,10 @@ public class Account {
 
     public int getSize_storage() {
         return size_storage;
+    }
+
+    public void setSize_storage(int size_storage) {
+        this.size_storage = size_storage;
     }
 
     public List<ObjectDetails> getObjectDetails() {
