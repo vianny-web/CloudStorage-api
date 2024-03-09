@@ -44,7 +44,6 @@ public class MainController {
         try {
             String fullDirectory = directory + object.getOriginalFilename();
             objectService.saveObject(object, fullDirectory, principal.getName());
-            accountService.reduceSizeStorage(principal.getName(), (int) object.getSize());
 
             InputStream inputStream = object.getInputStream();
             minioConfig.minioClient().putObject(PutObjectArgs.builder()
@@ -65,6 +64,7 @@ public class MainController {
     public ResponseEntity<ResponseMessage> deleteFile(@RequestParam("path") String path, Principal principal) {
         try {
             objectService.deleteObject(path, principal.getName());
+
             RemoveObjectArgs removeObjectArgs = RemoveObjectArgs.builder()
                     .bucket(principal.getName())
                     .object(path)

@@ -15,4 +15,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Modifying
     @Query("UPDATE Account u SET u.size_storage = u.size_storage - :bytesToSubtract WHERE u.login = :login")
     void subtractBytesFromSizeStorage(@Param("login") String login, @Param("bytesToSubtract") int bytesToSubtract);
+
+    @Modifying
+    @Query("UPDATE Account a SET a.size_storage = a.size_storage + :sizeObject WHERE a.login = :login")
+    void updateSizeStorageByLogin(@Param("login") String login, @Param("sizeObject") int sizeObject);
 }

@@ -1,7 +1,9 @@
 package com.vianny.cloudstorageapi.services;
 
+import com.vianny.cloudstorageapi.exception.requiredException.NotFoundRequiredException;
 import com.vianny.cloudstorageapi.models.Account;
 import com.vianny.cloudstorageapi.repositories.AccountRepository;
+import com.vianny.cloudstorageapi.repositories.ObjectRepository;
 import com.vianny.cloudstorageapi.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +17,6 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class AccountService implements UserDetailsService {
     private AccountRepository accountRepository;
-
     @Autowired
     public void setUserRepository(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
@@ -28,15 +29,5 @@ public class AccountService implements UserDetailsService {
         ));
 
         return UserDetailsImpl.build(account);
-    }
-
-    @Transactional
-    public void reduceSizeStorage(String login, int sizeObject) {
-        try {
-            accountRepository.subtractBytesFromSizeStorage(login,sizeObject);
-        }
-        catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Внутренняя ошибка сервера", e);
-        }
     }
 }

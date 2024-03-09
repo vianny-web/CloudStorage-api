@@ -7,9 +7,11 @@ import com.vianny.cloudstorageapi.models.ObjectDetails;
 import com.vianny.cloudstorageapi.repositories.AccountRepository;
 import com.vianny.cloudstorageapi.repositories.ObjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -40,18 +42,38 @@ public class ObjectService {
         objectDetails.setObjectSize((int) object.getSize());
         objectDetails.setObjectLocation(directory);
         objectDetails.setUploadDate(LocalDateTime.now());
-
         objectDetails.setAccount(currentAccount.orElseThrow());
+        reduceSizeStorage(login, (int) object.getSize());
+
         objectRepository.save(objectDetails);
     }
 
     @Transactional
-    public void deleteObject(String directory, String login) {
-        if (objectRepository.findByObjectLocationAndAccount_Login(directory, login) == null) {
+    public void deleteObject(String path, String login) {
+        if (objectRepository.findByObjectLocationAndAccount_Login(path, login) == null) {
             throw new NotFoundRequiredException("Файл с таким именем не найден");
         }
-        else {
-            objectRepository.deleteObjectDetailsByObjectLocation(directory);
+        addSizeStorage(login, path);
+        objectRepository.deleteObjectDetailsByObjectLocation(path);
+    }
+
+    @Transactional
+    public void reduceSizeStorage(String login, int sizeObject) {
+        try {
+            accountRepository.subtractBytesFromSizeStorage(login,sizeObject);
+        }
+        catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Внутренняя ошибка сервера", e);
+        }
+    }
+    @Transactional
+    public void addSizeStorage(String login, String path) {
+        try {
+            int sizeObject = objectRepository.findByObjectLocationAndAccount_Login(path, login).getObjectSize();
+            accountRepository.updateSizeStorageByLogin(login, sizeObject);
+        }
+        catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Внутренняя ошибка сервера", e);
         }
     }
 }
