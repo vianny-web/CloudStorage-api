@@ -41,14 +41,13 @@ public class MainController {
     @PostMapping("/upload")
     public ResponseEntity<ResponseMessage> uploadFile(@RequestParam MultipartFile object, @RequestParam String directory, Principal principal) {
         try {
-            objectService.saveObject(object, directory, principal.getName());
-
-            String objectName = directory + "/" + object.getOriginalFilename();
+            String fullDirectory = directory + object.getOriginalFilename();
+            objectService.saveObject(object, fullDirectory, principal.getName());
 
             InputStream inputStream = object.getInputStream();
             minioConfig.minioClient().putObject(PutObjectArgs.builder()
                     .bucket(principal.getName())
-                    .object(objectName)
+                    .object(fullDirectory)
                     .stream(inputStream, inputStream.available(), -1)
                     .build());
         }
@@ -61,21 +60,23 @@ public class MainController {
     }
 
     @DeleteMapping("/{directory}")
-    public ResponseEntity<ResponseMessage> deleteFile(@PathVariable String directory, Principal principal) {
+    public ResponseEntity<ResponseMessage> deleteFile(@PathVariable("directory") String directory, Principal principal) {
+        System.out.println(directory);
         try {
+            objectService.deleteObject(directory, principal.getName());
             RemoveObjectArgs removeObjectArgs = RemoveObjectArgs.builder()
                     .bucket(principal.getName())
                     .object(directory)
                     .build();
             minioConfig.minioClient().removeObject(removeObjectArgs);
+
+            ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK, "Файл успешно удален");
+            return new ResponseEntity<>(responseMessage, HttpStatus.OK);
         }
         catch (RuntimeException | ServerException | InsufficientDataException | ErrorResponseException | IOException |
                NoSuchAlgorithmException | InvalidKeyException | InvalidResponseException | XmlParserException |
                InternalException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Внутренняя ошибка сервера", e);
         }
-
-        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK, "Файл успешно удален");
-        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
     }
 }

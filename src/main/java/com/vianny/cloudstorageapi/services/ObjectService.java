@@ -1,6 +1,7 @@
 package com.vianny.cloudstorageapi.services;
 
 import com.vianny.cloudstorageapi.exception.requiredException.ConflictRequiredException;
+import com.vianny.cloudstorageapi.exception.requiredException.NotFoundRequiredException;
 import com.vianny.cloudstorageapi.models.Account;
 import com.vianny.cloudstorageapi.models.ObjectDetails;
 import com.vianny.cloudstorageapi.repositories.AccountRepository;
@@ -26,12 +27,12 @@ public class ObjectService {
     }
 
     @Transactional
-    public void saveObject(MultipartFile object, String directory, String username) {
+    public void saveObject(MultipartFile object, String directory, String login) {
         ObjectDetails objectDetails = new ObjectDetails();
-        Optional<Account> currentAccount = accountRepository.findUserByLogin(username);
+        Optional<Account> currentAccount = accountRepository.findUserByLogin(login);
 
-        if (objectRepository.findByObjectName(object.getOriginalFilename()) != null) {
-            throw new ConflictRequiredException("Файл с таким именем уже существует");
+        if (objectRepository.findByObjectLocationAndAccount_Login(directory, login) != null) {
+            throw new ConflictRequiredException("Файл с таким именем в этом каталоге уже существует");
         }
 
         objectDetails.setObjectName(object.getOriginalFilename());
@@ -43,4 +44,14 @@ public class ObjectService {
         objectRepository.save(objectDetails);
     }
 
+    @Transactional
+    public void deleteObject(String directory, String login) {
+        if (objectRepository.findByObjectLocationAndAccount_Login(directory, login) == null) {
+            throw new NotFoundRequiredException("Файл с таким именем не найден");
+        }
+        else {
+            System.out.println("directory: " + directory);
+            objectRepository.deleteObjectDetailsByObjectLocation(directory);
+        }
+    }
 }
