@@ -70,7 +70,7 @@ public class ObjectService {
         if (objectRepository.findByObjectNameAndObjectLocationAndAccount_Login(filename, path, login) == null) {
             throw new NotFoundRequiredException("Файл с таким именем не найден");
         }
-        addSizeStorage(login, path);
+        addSizeStorage(filename, login, path);
         objectRepository.deleteObjectDetailsByObjectLocation(path, login);
     }
 
@@ -85,9 +85,9 @@ public class ObjectService {
         }
     }
     @Transactional
-    public void addSizeStorage(String login, String path) {
+    public void addSizeStorage(String filename, String login, String path) {
         try {
-            int sizeObject = objectRepository.findByObjectLocationAndAccount_Login(path, login).getObjectSize();
+            int sizeObject = objectRepository.findByObjectNameAndObjectLocationAndAccount_Login(filename, path, login).getObjectSize();
             accountRepository.updateSizeStorageByLogin(login, sizeObject);
         }
         catch (Exception e) {
