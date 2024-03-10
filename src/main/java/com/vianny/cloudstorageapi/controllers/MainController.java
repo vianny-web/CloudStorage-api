@@ -44,12 +44,12 @@ public class MainController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<ResponseMessage> uploadFile(@RequestParam MultipartFile object, @RequestParam String path, Principal principal) {
+    public ResponseEntity<ResponseMessage> uploadFile(@RequestParam MultipartFile file, @RequestParam String path, Principal principal) {
         try {
             String fullDirectory = principal.getName() + "/" + path;
-            fileService.saveObject(object, fullDirectory, principal.getName());
+            fileService.saveObject(file, fullDirectory, principal.getName());
 
-            InputStream inputStream = object.getInputStream();
+            InputStream inputStream = file.getInputStream();
             minioConfig.minioClient().putObject(PutObjectArgs.builder()
                     .bucket(principal.getName())
                     .object(fullDirectory)
