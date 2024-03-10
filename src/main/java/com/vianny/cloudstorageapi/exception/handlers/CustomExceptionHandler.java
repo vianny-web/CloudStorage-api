@@ -61,4 +61,10 @@ public class CustomExceptionHandler {
     public ResponseDataException handlerNoAccessErrorException (ConflictRequiredException exception) {
         return new ResponseDataException(HttpStatus.CONFLICT, exception.getMessage());
     }
+
+    @ExceptionHandler(NoContentRequiredException.class)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseDataException handlerNoContentErrorException (NoContentRequiredException exception) {
+        return new ResponseDataException(HttpStatus.NO_CONTENT, exception.getMessage());
+    }
 }

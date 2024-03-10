@@ -5,6 +5,7 @@ import com.vianny.cloudstorageapi.dto.ObjectDetailsDTO;
 import com.vianny.cloudstorageapi.dto.response.ResponseAllObjects;
 import com.vianny.cloudstorageapi.dto.response.ResponseMessage;
 import com.vianny.cloudstorageapi.dto.response.ResponseObjectDetails;
+import com.vianny.cloudstorageapi.exception.requiredException.NoContentRequiredException;
 import com.vianny.cloudstorageapi.services.AccountService;
 import com.vianny.cloudstorageapi.services.FileService;
 import io.minio.PutObjectArgs;
@@ -46,6 +47,10 @@ public class MainController {
     @PostMapping("/upload")
     public ResponseEntity<ResponseMessage> uploadFile(@RequestParam MultipartFile file, @RequestParam String path, Principal principal) {
         try {
+            if (file.isEmpty()) {
+                throw new NoContentRequiredException("Нет содержания файла");
+            }
+
             String fullDirectory = principal.getName() + "/" + path;
             fileService.saveObject(file, fullDirectory, principal.getName());
 
