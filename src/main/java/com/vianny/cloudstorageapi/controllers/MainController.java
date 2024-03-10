@@ -44,9 +44,9 @@ public class MainController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<ResponseMessage> uploadFile(@RequestParam MultipartFile object, @RequestParam String directory, Principal principal) {
+    public ResponseEntity<ResponseMessage> uploadFile(@RequestParam MultipartFile object, @RequestParam String path, Principal principal) {
         try {
-            String fullDirectory = directory + object.getOriginalFilename();
+            String fullDirectory = path + object.getOriginalFilename();
             objectService.saveObject(object, fullDirectory, principal.getName());
 
             InputStream inputStream = object.getInputStream();
@@ -80,9 +80,9 @@ public class MainController {
     public ResponseEntity<ResponseAllObjects<List<String>>> getFiles(@RequestParam("path") String path, Principal principal) {
         try {
             List<String> objects = objectService.getObjectsName(path,principal.getName());
-            ResponseAllObjects<List<String>> dataObject = new ResponseAllObjects<>(HttpStatus.FOUND, objects);
+            ResponseAllObjects<List<String>> responseAllObjects = new ResponseAllObjects<>(HttpStatus.FOUND, objects);
 
-            return new ResponseEntity<>(dataObject,HttpStatus.OK);
+            return new ResponseEntity<>(responseAllObjects,HttpStatus.OK);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Внутренняя ошибка сервера", e);
         }
