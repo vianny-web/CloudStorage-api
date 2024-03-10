@@ -1,5 +1,6 @@
 package com.vianny.cloudstorageapi.models;
 
+import com.vianny.cloudstorageapi.enums.TypeObject;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,8 @@ public class ObjectDetails {
     private Long id;
     @Column(name = "object_name")
     private String objectName;
+    @Column(name = "object_type")
+    private Enum<TypeObject> objectType;
     @Column(name = "object_size")
     private int objectSize;
     @Column(name = "object_location")
@@ -24,8 +27,9 @@ public class ObjectDetails {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    public ObjectDetails(String objectName, int objectSize, String objectLocation, LocalDateTime uploadDate) {
+    public ObjectDetails(String objectName, Enum<TypeObject> objectType, int objectSize, String objectLocation, LocalDateTime uploadDate) {
         this.objectName = objectName;
+        this.objectType = objectType;
         this.objectSize = objectSize;
         this.objectLocation = objectLocation;
         this.uploadDate = uploadDate;
@@ -80,5 +84,13 @@ public class ObjectDetails {
 
     public void setAccount(Account account) {
         this.account = account;
+    }
+
+    public Enum<TypeObject> getObjectType() {
+        return objectType;
+    }
+
+    public void setObjectType(Enum<TypeObject> objectType) {
+        this.objectType = objectType;
     }
 }
