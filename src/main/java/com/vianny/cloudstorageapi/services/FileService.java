@@ -7,7 +7,7 @@ import com.vianny.cloudstorageapi.exception.requiredException.NotFoundRequiredEx
 import com.vianny.cloudstorageapi.models.Account;
 import com.vianny.cloudstorageapi.models.ObjectDetails;
 import com.vianny.cloudstorageapi.repositories.AccountRepository;
-import com.vianny.cloudstorageapi.repositories.ObjectRepository;
+import com.vianny.cloudstorageapi.repositories.FileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -21,11 +21,11 @@ import java.util.Optional;
 
 @Service
 public class FileService {
-    private ObjectRepository objectRepository;
+    private FileRepository fileRepository;
     private AccountRepository accountRepository;
     @Autowired
-    public void setObjectRepository(ObjectRepository objectRepository) {
-        this.objectRepository = objectRepository;
+    public void setObjectRepository(FileRepository fileRepository) {
+        this.fileRepository = fileRepository;
     }
     @Autowired
     public void setAccountRepository(AccountRepository accountRepository) {
@@ -37,7 +37,7 @@ public class FileService {
         ObjectDetails objectDetails = new ObjectDetails();
         Optional<Account> currentAccount = accountRepository.findUserByLogin(login);
 
-        if (objectRepository.findByObjectNameAndObjectLocationAndAccount_Login(object.getOriginalFilename(),path,login) != null) {
+        if (fileRepository.findByObjectNameAndObjectLocationAndAccount_Login(object.getOriginalFilename(),path,login) != null) {
             throw new ConflictRequiredException("Файл с таким именем в этом каталоге уже существует");
         }
 
@@ -49,29 +49,29 @@ public class FileService {
         objectDetails.setAccount(currentAccount.orElseThrow());
         reduceSizeStorage(login, (int) object.getSize());
 
-        objectRepository.save(objectDetails);
+        fileRepository.save(objectDetails);
     }
 
     @Transactional
     public List<ObjectDetailsDTO> getObject(String filename, String path, String login) {
-        if (objectRepository.findByObjectNameAndObjectLocationAndAccount_Login(filename, path, login) == null) {
+        if (fileRepository.findByObjectNameAndObjectLocationAndAccount_Login(filename, path, login) == null) {
             throw new NotFoundRequiredException("Файл с таким именем не найден");
         }
-        return objectRepository.getObjectDetailsByObjectLocation(filename, path, login);
+        return fileRepository.getObjectDetailsByObjectLocation(filename, path, login);
     }
 
     @Transactional
     public List<String> getObjectsName(String path, String login) {
-        return objectRepository.getObjectsNameByObjectLocation(path,login);
+        return fileRepository.getObjectsNameByObjectLocation(path,login);
     }
 
     @Transactional
     public void deleteObject(String filename, String path, String login) {
-        if (objectRepository.findByObjectNameAndObjectLocationAndAccount_Login(filename, path, login) == null) {
+        if (fileRepository.findByObjectNameAndObjectLocationAndAccount_Login(filename, path, login) == null) {
             throw new NotFoundRequiredException("Файл с таким именем не найден");
         }
         addSizeStorage(filename, login, path);
-        objectRepository.deleteObjectDetailsByObjectLocation(path, login);
+        fileRepository.deleteObjectDetailsByObjectLocation(path, login);
     }
 
 
@@ -87,7 +87,7 @@ public class FileService {
     @Transactional
     public void addSizeStorage(String filename, String login, String path) {
         try {
-            int sizeObject = objectRepository.findByObjectNameAndObjectLocationAndAccount_Login(filename, path, login).getObjectSize();
+            int sizeObject = fileRepository.findByObjectNameAndObjectLocationAndAccount_Login(filename, path, login).getObjectSize();
             accountRepository.updateSizeStorageByLogin(login, sizeObject);
         }
         catch (Exception e) {
