@@ -2,6 +2,7 @@ package com.vianny.cloudstorageapi.controllers;
 
 import com.vianny.cloudstorageapi.config.MinioConfig;
 import com.vianny.cloudstorageapi.dto.ObjectDetailsDTO;
+import com.vianny.cloudstorageapi.dto.response.ResponseAllObjects;
 import com.vianny.cloudstorageapi.dto.response.ResponseMessage;
 import com.vianny.cloudstorageapi.dto.response.ResponseObjectDetails;
 import com.vianny.cloudstorageapi.services.AccountService;
@@ -67,7 +68,6 @@ public class MainController {
     public ResponseEntity<ResponseObjectDetails<List<ObjectDetailsDTO>>> getPropertiesFile(@RequestParam("path") String path, Principal principal) {
         try {
             List<ObjectDetailsDTO> objectDetails = objectService.getObject(path, principal.getName());
-
             ResponseObjectDetails<List<ObjectDetailsDTO>> dataObject = new ResponseObjectDetails<>(HttpStatus.FOUND, objectDetails);
             return new ResponseEntity<>(dataObject, HttpStatus.OK);
 
@@ -76,6 +76,17 @@ public class MainController {
         }
     }
 
+    @GetMapping("/")
+    public ResponseEntity<ResponseAllObjects<List<String>>> getFiles(@RequestParam("path") String path, Principal principal) {
+        try {
+            List<String> objects = objectService.getObjectsName(path,principal.getName());
+            ResponseAllObjects<List<String>> dataObject = new ResponseAllObjects<>(HttpStatus.FOUND, objects);
+
+            return new ResponseEntity<>(dataObject,HttpStatus.OK);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Внутренняя ошибка сервера", e);
+        }
+    }
 
     @DeleteMapping("/")
     public ResponseEntity<ResponseMessage> deleteFile(@RequestParam("path") String path, Principal principal) {

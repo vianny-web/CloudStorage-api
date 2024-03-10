@@ -59,6 +59,14 @@ public class ObjectService {
     }
 
     @Transactional
+    public List<String> getObjectsName(String path, String login) {
+        if (objectRepository.findByObjectLocationAndAccount_Login(path, login) == null) {
+            throw new NotFoundRequiredException("В этой директории нет файлов");
+        }
+        return objectRepository.getObjectsNameByObjectLocation(path,login);
+    }
+
+    @Transactional
     public void deleteObject(String path, String login) {
         if (objectRepository.findByObjectLocationAndAccount_Login(path, login) == null) {
             throw new NotFoundRequiredException("Файл с таким именем не найден");
