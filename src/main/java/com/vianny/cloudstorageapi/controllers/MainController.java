@@ -6,7 +6,7 @@ import com.vianny.cloudstorageapi.dto.response.ResponseAllObjects;
 import com.vianny.cloudstorageapi.dto.response.ResponseMessage;
 import com.vianny.cloudstorageapi.dto.response.ResponseObjectDetails;
 import com.vianny.cloudstorageapi.services.AccountService;
-import com.vianny.cloudstorageapi.services.ObjectService;
+import com.vianny.cloudstorageapi.services.FileService;
 import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
 import io.minio.errors.*;
@@ -28,15 +28,15 @@ import java.util.List;
 @RequestMapping("/myCloud")
 public class MainController {
     private MinioConfig minioConfig;
-    private ObjectService objectService;
+    private FileService fileService;
     private AccountService accountService;
     @Autowired
     public void setMinioConfig(MinioConfig minioConfig) {
         this.minioConfig = minioConfig;
     }
     @Autowired
-    public void setObjectService(ObjectService objectService) {
-        this.objectService = objectService;
+    public void setObjectService(FileService fileService) {
+        this.fileService = fileService;
     }
     @Autowired
     public void setAccountService(AccountService accountService) {
@@ -47,7 +47,7 @@ public class MainController {
     public ResponseEntity<ResponseMessage> uploadFile(@RequestParam MultipartFile object, @RequestParam String path, Principal principal) {
         try {
             String fullDirectory = principal.getName() + "/" + path;
-            objectService.saveObject(object, fullDirectory, principal.getName());
+            fileService.saveObject(object, fullDirectory, principal.getName());
 
             InputStream inputStream = object.getInputStream();
             minioConfig.minioClient().putObject(PutObjectArgs.builder()
@@ -67,7 +67,7 @@ public class MainController {
     @GetMapping("/propertiesFile")
     public ResponseEntity<ResponseObjectDetails<List<ObjectDetailsDTO>>> getPropertiesFile(@RequestParam("path") String path, @RequestParam("filename") String filename, Principal principal) {
         try {
-            List<ObjectDetailsDTO> objectDetails = objectService.getObject(filename, path, principal.getName());
+            List<ObjectDetailsDTO> objectDetails = fileService.getObject(filename, path, principal.getName());
             ResponseObjectDetails<List<ObjectDetailsDTO>> dataObject = new ResponseObjectDetails<>(HttpStatus.FOUND, objectDetails);
             return new ResponseEntity<>(dataObject, HttpStatus.OK);
 
@@ -79,7 +79,7 @@ public class MainController {
     @GetMapping("/")
     public ResponseEntity<ResponseAllObjects<List<String>>> getFiles(@RequestParam("path") String path, Principal principal) {
         try {
-            List<String> objects = objectService.getObjectsName(path, principal.getName());
+            List<String> objects = fileService.getObjectsName(path, principal.getName());
             ResponseAllObjects<List<String>> responseAllObjects = new ResponseAllObjects<>(HttpStatus.FOUND, objects);
 
             return new ResponseEntity<>(responseAllObjects,HttpStatus.OK);
@@ -91,7 +91,7 @@ public class MainController {
     @DeleteMapping("/")
     public ResponseEntity<ResponseMessage> deleteFile(@RequestParam("path") String path, @RequestParam("filename") String filename, Principal principal) {
         try {
-            objectService.deleteObject(filename, path, principal.getName());
+            fileService.deleteObject(filename, path, principal.getName());
 
             RemoveObjectArgs removeObjectArgs = RemoveObjectArgs.builder()
                     .bucket(principal.getName())
