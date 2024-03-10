@@ -1,7 +1,9 @@
 package com.vianny.cloudstorageapi.controllers;
 
 import com.vianny.cloudstorageapi.config.MinioConfig;
-import com.vianny.cloudstorageapi.dto.ResponseMessage;
+import com.vianny.cloudstorageapi.dto.ObjectDetailsDTO;
+import com.vianny.cloudstorageapi.dto.response.ResponseMessage;
+import com.vianny.cloudstorageapi.dto.response.ResponseObjectDetails;
 import com.vianny.cloudstorageapi.services.AccountService;
 import com.vianny.cloudstorageapi.services.ObjectService;
 import io.minio.PutObjectArgs;
@@ -19,6 +21,7 @@ import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/myCloud")
@@ -59,6 +62,20 @@ public class MainController {
         ResponseMessage responseMessage = new ResponseMessage(HttpStatus.CREATED, "Файл успешно загружен");
         return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
     }
+
+    @GetMapping("/propertiesFile")
+    public ResponseEntity<ResponseObjectDetails<List<ObjectDetailsDTO>>> getPropertiesFile(@RequestParam("path") String path, Principal principal) {
+        try {
+            List<ObjectDetailsDTO> objectDetails = objectService.getObject(path, principal.getName());
+
+            ResponseObjectDetails<List<ObjectDetailsDTO>> dataObject = new ResponseObjectDetails<>(HttpStatus.FOUND, objectDetails);
+            return new ResponseEntity<>(dataObject, HttpStatus.OK);
+
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Внутренняя ошибка сервера", e);
+        }
+    }
+
 
     @DeleteMapping("/")
     public ResponseEntity<ResponseMessage> deleteFile(@RequestParam("path") String path, Principal principal) {

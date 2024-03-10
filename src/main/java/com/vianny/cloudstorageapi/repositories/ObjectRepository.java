@@ -1,9 +1,13 @@
 package com.vianny.cloudstorageapi.repositories;
 
+import com.vianny.cloudstorageapi.dto.ObjectDetailsDTO;
 import com.vianny.cloudstorageapi.models.ObjectDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 public interface ObjectRepository extends JpaRepository<ObjectDetails, Long> {
     ObjectDetails findByObjectLocationAndAccount_Login(String objectLocation, String login);
@@ -11,4 +15,10 @@ public interface ObjectRepository extends JpaRepository<ObjectDetails, Long> {
     @Modifying
     @Query("DELETE FROM ObjectDetails od WHERE od.objectLocation = :objectLocation AND od.account.login = :login")
     void deleteObjectDetailsByObjectLocation(String objectLocation, String login);
+
+    @Modifying
+    @Query("SELECT new com.vianny.cloudstorageapi.dto.ObjectDetailsDTO(od.objectName, od.objectLocation, od.objectSize, od.uploadDate) " +
+            "FROM ObjectDetails od WHERE od.objectLocation = :objectLocation AND od.account.login = :login")
+    List<ObjectDetailsDTO> getObjectDetailsByObjectLocation(@Param("objectLocation") String objectLocation, @Param("login") String login);
+
 }

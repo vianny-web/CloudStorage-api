@@ -1,5 +1,6 @@
 package com.vianny.cloudstorageapi.services;
 
+import com.vianny.cloudstorageapi.dto.ObjectDetailsDTO;
 import com.vianny.cloudstorageapi.exception.requiredException.ConflictRequiredException;
 import com.vianny.cloudstorageapi.exception.requiredException.NotFoundRequiredException;
 import com.vianny.cloudstorageapi.models.Account;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -49,6 +51,14 @@ public class ObjectService {
     }
 
     @Transactional
+    public List<ObjectDetailsDTO> getObject(String path, String login) {
+        if (objectRepository.findByObjectLocationAndAccount_Login(path, login) == null) {
+            throw new NotFoundRequiredException("Файл с таким именем не найден");
+        }
+        return objectRepository.getObjectDetailsByObjectLocation(path, login);
+    }
+
+    @Transactional
     public void deleteObject(String path, String login) {
         if (objectRepository.findByObjectLocationAndAccount_Login(path, login) == null) {
             throw new NotFoundRequiredException("Файл с таким именем не найден");
@@ -56,6 +66,7 @@ public class ObjectService {
         addSizeStorage(login, path);
         objectRepository.deleteObjectDetailsByObjectLocation(path, login);
     }
+
 
     @Transactional
     public void reduceSizeStorage(String login, int sizeObject) {
