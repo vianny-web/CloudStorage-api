@@ -89,9 +89,9 @@ public class MainController {
     }
 
     @DeleteMapping("/")
-    public ResponseEntity<ResponseMessage> deleteFile(@RequestParam("path") String path, Principal principal) {
+    public ResponseEntity<ResponseMessage> deleteFile(@RequestParam("path") String path, @RequestParam("filename") String filename, Principal principal) {
         try {
-            objectService.deleteObject(path, principal.getName());
+            objectService.deleteObject(filename, path, principal.getName());
 
             RemoveObjectArgs removeObjectArgs = RemoveObjectArgs.builder()
                     .bucket(principal.getName())
