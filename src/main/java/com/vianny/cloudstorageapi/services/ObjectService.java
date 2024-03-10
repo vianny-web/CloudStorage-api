@@ -1,6 +1,7 @@
 package com.vianny.cloudstorageapi.services;
 
 import com.vianny.cloudstorageapi.dto.ObjectDetailsDTO;
+import com.vianny.cloudstorageapi.enums.TypeObject;
 import com.vianny.cloudstorageapi.exception.requiredException.ConflictRequiredException;
 import com.vianny.cloudstorageapi.exception.requiredException.NotFoundRequiredException;
 import com.vianny.cloudstorageapi.models.Account;
@@ -41,6 +42,7 @@ public class ObjectService {
         }
 
         objectDetails.setObjectName(object.getOriginalFilename());
+        objectDetails.setObjectType(TypeObject.File);
         objectDetails.setObjectSize((int) object.getSize());
         objectDetails.setObjectLocation(directory);
         objectDetails.setUploadDate(LocalDateTime.now());

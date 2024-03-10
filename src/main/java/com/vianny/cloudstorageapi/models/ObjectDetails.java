@@ -14,8 +14,9 @@ public class ObjectDetails {
     private Long id;
     @Column(name = "object_name")
     private String objectName;
+    @Enumerated(EnumType.STRING)
     @Column(name = "object_type")
-    private Enum<TypeObject> objectType;
+    private TypeObject objectType;
     @Column(name = "object_size")
     private int objectSize;
     @Column(name = "object_location")
@@ -27,7 +28,7 @@ public class ObjectDetails {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    public ObjectDetails(String objectName, Enum<TypeObject> objectType, int objectSize, String objectLocation, LocalDateTime uploadDate) {
+    public ObjectDetails(String objectName, TypeObject objectType, int objectSize, String objectLocation, LocalDateTime uploadDate) {
         this.objectName = objectName;
         this.objectType = objectType;
         this.objectSize = objectSize;
@@ -86,11 +87,11 @@ public class ObjectDetails {
         this.account = account;
     }
 
-    public Enum<TypeObject> getObjectType() {
+    public TypeObject getObjectType() {
         return objectType;
     }
 
-    public void setObjectType(Enum<TypeObject> objectType) {
+    public void setObjectType(TypeObject objectType) {
         this.objectType = objectType;
     }
 }

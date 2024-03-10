@@ -1,15 +1,19 @@
 package com.vianny.cloudstorageapi.dto;
 
+import com.vianny.cloudstorageapi.enums.TypeObject;
+
 import java.time.LocalDateTime;
 
 public class ObjectDetailsDTO {
     private String objectName;
+    private Enum<TypeObject> objectType;
     private String objectLocation;
     private int objectSize;
     private LocalDateTime uploadDate;
 
-    public ObjectDetailsDTO(String objectName, String objectLocation, int objectSize, LocalDateTime uploadDate) {
+    public ObjectDetailsDTO(String objectName, Enum<TypeObject> objectType, String objectLocation, int objectSize, LocalDateTime uploadDate) {
         this.objectName = objectName;
+        this.objectType = objectType;
         this.objectLocation = objectLocation;
         this.objectSize = objectSize;
         this.uploadDate = uploadDate;
@@ -45,5 +49,13 @@ public class ObjectDetailsDTO {
 
     public void setUploadDate(LocalDateTime uploadDate) {
         this.uploadDate = uploadDate;
+    }
+
+    public Enum<TypeObject> getObjectType() {
+        return objectType;
+    }
+
+    public void setObjectType(Enum<TypeObject> objectType) {
+        this.objectType = objectType;
     }
 }
