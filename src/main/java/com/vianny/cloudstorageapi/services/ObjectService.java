@@ -37,7 +37,7 @@ public class ObjectService {
         ObjectDetails objectDetails = new ObjectDetails();
         Optional<Account> currentAccount = accountRepository.findUserByLogin(login);
 
-        if (objectRepository.findByObjectLocationAndObjectNameAndAccount_Login(object.getOriginalFilename(),path,login) != null) {
+        if (objectRepository.findByObjectNameAndObjectLocationAndAccount_Login(object.getOriginalFilename(),path,login) != null) {
             throw new ConflictRequiredException("Файл с таким именем в этом каталоге уже существует");
         }
 
