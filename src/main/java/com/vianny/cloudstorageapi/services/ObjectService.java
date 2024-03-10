@@ -33,18 +33,18 @@ public class ObjectService {
     }
 
     @Transactional
-    public void saveObject(MultipartFile object, String directory, String login) {
+    public void saveObject(MultipartFile object, String path, String login) {
         ObjectDetails objectDetails = new ObjectDetails();
         Optional<Account> currentAccount = accountRepository.findUserByLogin(login);
 
-        if (objectRepository.findByObjectLocationAndAccount_Login(directory, login) != null) {
+        if (objectRepository.findByObjectLocationAndAccount_Login(path, login) != null) {
             throw new ConflictRequiredException("Файл с таким именем в этом каталоге уже существует");
         }
 
         objectDetails.setObjectName(object.getOriginalFilename());
         objectDetails.setObjectType(TypeObject.File);
         objectDetails.setObjectSize((int) object.getSize());
-        objectDetails.setObjectLocation(directory);
+        objectDetails.setObjectLocation(path);
         objectDetails.setUploadDate(LocalDateTime.now());
         objectDetails.setAccount(currentAccount.orElseThrow());
         reduceSizeStorage(login, (int) object.getSize());
