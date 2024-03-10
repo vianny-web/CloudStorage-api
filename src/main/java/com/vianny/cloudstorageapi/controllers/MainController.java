@@ -65,9 +65,9 @@ public class MainController {
     }
 
     @GetMapping("/propertiesFile")
-    public ResponseEntity<ResponseObjectDetails<List<ObjectDetailsDTO>>> getPropertiesFile(@RequestParam("path") String path, Principal principal) {
+    public ResponseEntity<ResponseObjectDetails<List<ObjectDetailsDTO>>> getPropertiesFile(@RequestParam("path") String path, @RequestParam("filename") String filename, Principal principal) {
         try {
-            List<ObjectDetailsDTO> objectDetails = objectService.getObject(path, principal.getName());
+            List<ObjectDetailsDTO> objectDetails = objectService.getObject(filename, path, principal.getName());
             ResponseObjectDetails<List<ObjectDetailsDTO>> dataObject = new ResponseObjectDetails<>(HttpStatus.FOUND, objectDetails);
             return new ResponseEntity<>(dataObject, HttpStatus.OK);
 

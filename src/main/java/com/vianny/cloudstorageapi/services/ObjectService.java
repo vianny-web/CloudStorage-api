@@ -53,11 +53,11 @@ public class ObjectService {
     }
 
     @Transactional
-    public List<ObjectDetailsDTO> getObject(String path, String login) {
-        if (objectRepository.findByObjectLocationAndAccount_Login(path, login) == null) {
+    public List<ObjectDetailsDTO> getObject(String filename, String path, String login) {
+        if (objectRepository.findByObjectNameAndObjectLocationAndAccount_Login(filename, path, login) == null) {
             throw new NotFoundRequiredException("Файл с таким именем не найден");
         }
-        return objectRepository.getObjectDetailsByObjectLocation(path, login);
+        return objectRepository.getObjectDetailsByObjectLocation(filename, path, login);
     }
 
     @Transactional
