@@ -79,7 +79,7 @@ public class MainController {
     @GetMapping("/")
     public ResponseEntity<ResponseAllObjects<List<String>>> getFiles(@RequestParam("path") String path, Principal principal) {
         try {
-            List<String> objects = objectService.getObjectsName(path,principal.getName());
+            List<String> objects = objectService.getObjectsName(path, principal.getName());
             ResponseAllObjects<List<String>> responseAllObjects = new ResponseAllObjects<>(HttpStatus.FOUND, objects);
 
             return new ResponseEntity<>(responseAllObjects,HttpStatus.OK);
