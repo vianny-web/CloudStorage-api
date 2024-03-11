@@ -64,7 +64,7 @@ public class SecurityController {
     ResponseEntity<?> singUp(@RequestBody SignUpRequest signUpRequest) {
         try {
             if (accountRepository.existsUserByLogin(signUpRequest.getLogin())) {
-                throw new UnregisteredRequiredException(HttpStatus.BAD_REQUEST, "Выберете другой логин");
+                throw new UnregisteredRequiredException(HttpStatus.BAD_REQUEST, "Choose a different login");
             }
 
             Account account = new Account();
@@ -84,10 +84,10 @@ public class SecurityController {
             }
         }
         catch (BadCredentialsException e) {
-            throw new UnauthorizedRequiredException(HttpStatus.UNAUTHORIZED, "Регистрация не удалась");
+            throw new UnauthorizedRequiredException(HttpStatus.UNAUTHORIZED, "Registration failed");
         }
 
-        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.CREATED, "Успешно");
+        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.CREATED, "Successfully");
         return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
     }
 
@@ -102,7 +102,7 @@ public class SecurityController {
 
         }
         catch (BadCredentialsException e) {
-            throw new UnauthorizedRequiredException(HttpStatus.UNAUTHORIZED, "Аутентификация не удалась");
+            throw new UnauthorizedRequiredException(HttpStatus.UNAUTHORIZED, "Authentication failed");
         }
 
         SecurityContextHolder.getContext().setAuthentication(authentication);

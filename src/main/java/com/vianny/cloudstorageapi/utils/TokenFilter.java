@@ -39,7 +39,7 @@ public class TokenFilter extends OncePerRequestFilter {
                     username = jwtCore.getNameFromJwt(jwt);
                 }
                 catch (ExpiredJwtException e) {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Токен аутентификации истек");
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication token expired");
                     return;
                 }
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {

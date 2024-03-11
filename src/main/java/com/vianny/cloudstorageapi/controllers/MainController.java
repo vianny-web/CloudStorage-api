@@ -52,7 +52,7 @@ public class MainController {
     public ResponseEntity<ResponseMessage> uploadFile(@RequestParam MultipartFile file, @RequestParam String path, Principal principal) {
         try {
             if (file.isEmpty()) {
-                throw new NoContentRequiredException("Нет содержания файла");
+                throw new NoContentRequiredException("No file content");
             }
             String fullDirectory = principal.getName() + "/" + path;
             InputStream inputStream = file.getInputStream();
@@ -67,7 +67,7 @@ public class MainController {
             throw new ServerErrorRequiredException(e.getMessage());
         }
 
-        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.CREATED, "Файл успешно загружен");
+        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.CREATED, "File successfully uploaded");
         return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
     }
 
@@ -106,7 +106,7 @@ public class MainController {
 
             fileService.deleteObject(filename, path, principal.getName());
 
-            ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK, "Файл успешно удален");
+            ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK, "File successfully deleted");
             return new ResponseEntity<>(responseMessage, HttpStatus.OK);
         }
         catch (RuntimeException | ServerException | InsufficientDataException | ErrorResponseException | IOException |

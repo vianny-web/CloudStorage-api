@@ -40,7 +40,7 @@ public class FileService {
         Optional<Account> currentAccount = accountRepository.findUserByLogin(login);
 
         if (fileRepository.findByObjectNameAndObjectLocationAndAccount_Login(file.getOriginalFilename(),path,login) != null) {
-            throw new ConflictRequiredException("Файл с таким именем в этом каталоге уже существует");
+            throw new ConflictRequiredException("A file with this name already exists in this directory");
         }
 
         objectDetails.setObjectName(file.getOriginalFilename());
@@ -57,7 +57,7 @@ public class FileService {
     @Transactional
     public List<ObjectDetailsDTO> getObject(String filename, String path, String login) {
         if (fileRepository.findByObjectNameAndObjectLocationAndAccount_Login(filename, path, login) == null) {
-            throw new NotFoundRequiredException("Файл с таким именем не найден");
+            throw new NotFoundRequiredException("File with this name is not found");
         }
         return fileRepository.getObjectDetailsByObjectLocation(filename, path, login);
     }
@@ -70,7 +70,7 @@ public class FileService {
     @Transactional
     public void deleteObject(String filename, String path, String login) {
         if (fileRepository.findByObjectNameAndObjectLocationAndAccount_Login(filename, path, login) == null) {
-            throw new NotFoundRequiredException("Файл с таким именем не найден");
+            throw new NotFoundRequiredException("File with this name is not found");
         }
         addSizeStorage(filename, login, path);
         fileRepository.deleteObjectDetailsByObjectLocation(path, login);
