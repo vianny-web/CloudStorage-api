@@ -50,6 +50,7 @@ public class MainController {
     }
 
     @PostMapping("/upload")
+    @Transactional
     public ResponseEntity<ResponseMessage> uploadFile(@RequestParam MultipartFile file, @RequestParam String path, Principal principal) {
         try {
             if (file.isEmpty()) {
@@ -101,6 +102,7 @@ public class MainController {
     }
 
     @DeleteMapping("/")
+    @Transactional
     public ResponseEntity<ResponseMessage> deleteFile(@RequestParam("path") String path, @RequestParam("filename") String filename, Principal principal) {
         try {
             RemoveObjectArgs removeObjectArgs = RemoveObjectArgs.builder()
