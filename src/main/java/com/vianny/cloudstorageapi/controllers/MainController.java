@@ -6,7 +6,9 @@ import com.vianny.cloudstorageapi.dto.ObjectsInfoDTO;
 import com.vianny.cloudstorageapi.dto.response.ResponseAllObjects;
 import com.vianny.cloudstorageapi.dto.response.ResponseMessage;
 import com.vianny.cloudstorageapi.dto.response.ResponseObjectDetails;
+import com.vianny.cloudstorageapi.exception.requiredException.NoAccessRequiredException;
 import com.vianny.cloudstorageapi.exception.requiredException.NoContentRequiredException;
+import com.vianny.cloudstorageapi.exception.requiredException.ServerErrorRequiredException;
 import com.vianny.cloudstorageapi.services.AccountService;
 import com.vianny.cloudstorageapi.services.FileService;
 import io.minio.PutObjectArgs;
@@ -18,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.server.ServerErrorException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,19 +54,17 @@ public class MainController {
             if (file.isEmpty()) {
                 throw new NoContentRequiredException("Нет содержания файла");
             }
-
             String fullDirectory = principal.getName() + "/" + path;
-            fileService.saveObject(file, fullDirectory, principal.getName());
-
             InputStream inputStream = file.getInputStream();
             minioConfig.minioClient().putObject(PutObjectArgs.builder()
                     .bucket(principal.getName())
                     .object(fullDirectory)
                     .stream(inputStream, inputStream.available(), -1)
                     .build());
+            fileService.saveObject(file, fullDirectory, principal.getName());
         }
         catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Внутренняя ошибка сервера", e);
+            throw new ServerErrorRequiredException(e.getMessage());
         }
 
         ResponseMessage responseMessage = new ResponseMessage(HttpStatus.CREATED, "Файл успешно загружен");
@@ -78,7 +79,7 @@ public class MainController {
             return new ResponseEntity<>(dataObject, HttpStatus.OK);
 
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Внутренняя ошибка сервера", e);
+            throw new ServerErrorRequiredException(e.getMessage());
         }
     }
 
@@ -90,20 +91,20 @@ public class MainController {
 
             return new ResponseEntity<>(responseAllObjects,HttpStatus.OK);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Внутренняя ошибка сервера", e);
+            throw new ServerErrorRequiredException(e.getMessage());
         }
     }
 
     @DeleteMapping("/")
     public ResponseEntity<ResponseMessage> deleteFile(@RequestParam("path") String path, @RequestParam("filename") String filename, Principal principal) {
         try {
-            fileService.deleteObject(filename, path, principal.getName());
-
             RemoveObjectArgs removeObjectArgs = RemoveObjectArgs.builder()
                     .bucket(principal.getName())
                     .object(path)
                     .build();
             minioConfig.minioClient().removeObject(removeObjectArgs);
+
+            fileService.deleteObject(filename, path, principal.getName());
 
             ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK, "Файл успешно удален");
             return new ResponseEntity<>(responseMessage, HttpStatus.OK);
@@ -111,7 +112,7 @@ public class MainController {
         catch (RuntimeException | ServerException | InsufficientDataException | ErrorResponseException | IOException |
                NoSuchAlgorithmException | InvalidKeyException | InvalidResponseException | XmlParserException |
                InternalException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Внутренняя ошибка сервера", e);
+            throw new ServerErrorRequiredException(e.getMessage());
         }
     }
 }

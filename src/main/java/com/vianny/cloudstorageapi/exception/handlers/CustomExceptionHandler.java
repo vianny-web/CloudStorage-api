@@ -67,4 +67,10 @@ public class CustomExceptionHandler {
     public ResponseDataException handlerNoContentErrorException (NoContentRequiredException exception) {
         return new ResponseDataException(HttpStatus.NO_CONTENT, exception.getMessage());
     }
+
+    @ExceptionHandler(ServerErrorRequiredException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseDataException handlerServerErrorException (ServerErrorRequiredException exception) {
+        return new ResponseDataException(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
+    }
 }

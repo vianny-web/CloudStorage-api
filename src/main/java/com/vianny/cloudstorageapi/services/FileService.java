@@ -5,6 +5,7 @@ import com.vianny.cloudstorageapi.dto.ObjectsInfoDTO;
 import com.vianny.cloudstorageapi.enums.TypeObject;
 import com.vianny.cloudstorageapi.exception.requiredException.ConflictRequiredException;
 import com.vianny.cloudstorageapi.exception.requiredException.NotFoundRequiredException;
+import com.vianny.cloudstorageapi.exception.requiredException.ServerErrorRequiredException;
 import com.vianny.cloudstorageapi.models.Account;
 import com.vianny.cloudstorageapi.models.ObjectDetails;
 import com.vianny.cloudstorageapi.repositories.AccountRepository;
@@ -78,21 +79,11 @@ public class FileService {
 
     @Transactional
     public void reduceSizeStorage(String login, int sizeObject) {
-        try {
-            accountRepository.subtractBytesFromSizeStorage(login,sizeObject);
-        }
-        catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Внутренняя ошибка сервера", e);
-        }
+        accountRepository.subtractBytesFromSizeStorage(login,sizeObject);
     }
     @Transactional
     public void addSizeStorage(String filename, String login, String path) {
-        try {
-            int sizeObject = fileRepository.findByObjectNameAndObjectLocationAndAccount_Login(filename, path, login).getObjectSize();
-            accountRepository.updateSizeStorageByLogin(login, sizeObject);
-        }
-        catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Внутренняя ошибка сервера", e);
-        }
+        int sizeObject = fileRepository.findByObjectNameAndObjectLocationAndAccount_Login(filename, path, login).getObjectSize();
+        accountRepository.updateSizeStorageByLogin(login, sizeObject);
     }
 }

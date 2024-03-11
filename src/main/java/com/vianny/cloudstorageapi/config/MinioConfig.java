@@ -1,5 +1,6 @@
 package com.vianny.cloudstorageapi.config;
 
+import com.vianny.cloudstorageapi.exception.requiredException.ServerErrorRequiredException;
 import io.minio.MinioClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -21,10 +22,16 @@ public class MinioConfig {
     @Bean
     public MinioClient minioClient() {
         if (minioClient == null) {
-            minioClient = MinioClient.builder()
-                    .endpoint(minio_endpoint)
-                    .credentials(minio_login, minio_password)
-                    .build();
+            try {
+                minioClient = MinioClient.builder()
+                        .endpoint(minio_endpoint)
+                        .credentials(minio_login, minio_password)
+                        .build();
+                return minioClient;
+            }
+            catch (Exception e) {
+                throw new ServerErrorRequiredException(e.getMessage());
+            }
         }
         return minioClient;
     }
