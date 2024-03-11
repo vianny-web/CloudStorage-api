@@ -1,6 +1,7 @@
 package com.vianny.cloudstorageapi.repositories;
 
 import com.vianny.cloudstorageapi.dto.ObjectDetailsDTO;
+import com.vianny.cloudstorageapi.dto.ObjectsInfoDTO;
 import com.vianny.cloudstorageapi.models.ObjectDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -20,6 +21,6 @@ public interface FileRepository extends JpaRepository<ObjectDetails, Long> {
             "FROM ObjectDetails od WHERE od.objectName = :objectName AND od.objectLocation = :objectLocation AND od.account.login = :login")
     List<ObjectDetailsDTO> getObjectDetailsByObjectLocation(@Param("objectName") String objectName, @Param("objectLocation") String objectLocation, @Param("login") String login);
 
-    @Query("SELECT od.objectName FROM ObjectDetails od WHERE od.objectLocation = :objectLocation AND od.account.login = :login")
-    List<String> getObjectsNameByObjectLocation(@Param("objectLocation") String objectLocation, @Param("login") String login);
+    @Query("SELECT new com.vianny.cloudstorageapi.dto.ObjectsInfoDTO(od.objectName, od.objectType) FROM ObjectDetails od WHERE od.objectLocation = :objectLocation AND od.account.login = :login")
+    List<ObjectsInfoDTO> getObjectsNameByObjectLocation(@Param("objectLocation") String objectLocation, @Param("login") String login);
 }

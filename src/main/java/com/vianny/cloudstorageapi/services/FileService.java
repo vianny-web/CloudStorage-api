@@ -1,6 +1,7 @@
 package com.vianny.cloudstorageapi.services;
 
 import com.vianny.cloudstorageapi.dto.ObjectDetailsDTO;
+import com.vianny.cloudstorageapi.dto.ObjectsInfoDTO;
 import com.vianny.cloudstorageapi.enums.TypeObject;
 import com.vianny.cloudstorageapi.exception.requiredException.ConflictRequiredException;
 import com.vianny.cloudstorageapi.exception.requiredException.NotFoundRequiredException;
@@ -61,7 +62,7 @@ public class FileService {
     }
 
     @Transactional
-    public List<String> getObjectsName(String path, String login) {
+    public List<ObjectsInfoDTO> getObjectsName(String path, String login) {
         return fileRepository.getObjectsNameByObjectLocation(path,login);
     }
 

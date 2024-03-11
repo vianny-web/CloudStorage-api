@@ -2,6 +2,7 @@ package com.vianny.cloudstorageapi.controllers;
 
 import com.vianny.cloudstorageapi.config.MinioConfig;
 import com.vianny.cloudstorageapi.dto.ObjectDetailsDTO;
+import com.vianny.cloudstorageapi.dto.ObjectsInfoDTO;
 import com.vianny.cloudstorageapi.dto.response.ResponseAllObjects;
 import com.vianny.cloudstorageapi.dto.response.ResponseMessage;
 import com.vianny.cloudstorageapi.dto.response.ResponseObjectDetails;
@@ -82,10 +83,10 @@ public class MainController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<ResponseAllObjects<List<String>>> getFiles(@RequestParam("path") String path, Principal principal) {
+    public ResponseEntity<ResponseAllObjects<List<ObjectsInfoDTO>>> getFiles(@RequestParam("path") String path, Principal principal) {
         try {
-            List<String> objects = fileService.getObjectsName(path, principal.getName());
-            ResponseAllObjects<List<String>> responseAllObjects = new ResponseAllObjects<>(HttpStatus.FOUND, objects);
+            List<ObjectsInfoDTO> objects = fileService.getObjectsName(path, principal.getName());
+            ResponseAllObjects<List<ObjectsInfoDTO>> responseAllObjects = new ResponseAllObjects<>(HttpStatus.FOUND, objects);
 
             return new ResponseEntity<>(responseAllObjects,HttpStatus.OK);
         } catch (Exception e) {
