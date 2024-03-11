@@ -3,6 +3,7 @@ package com.vianny.cloudstorageapi.dto.response;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class ResponseMessage {
     private HttpStatus httpStatus;
@@ -30,7 +31,8 @@ public class ResponseMessage {
         this.message = message;
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
+    public String getDateTime() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
+        return dateTime.format(formatter);
     }
 }
