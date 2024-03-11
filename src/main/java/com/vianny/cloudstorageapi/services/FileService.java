@@ -49,7 +49,6 @@ public class FileService {
         objectDetails.setObjectLocation(path);
         objectDetails.setUploadDate(LocalDateTime.now());
         objectDetails.setAccount(currentAccount.orElseThrow());
-        reduceSizeStorage(login, (int) file.getSize());
 
         fileRepository.save(objectDetails);
     }
@@ -72,18 +71,6 @@ public class FileService {
         if (fileRepository.findByObjectNameAndObjectLocationAndAccount_Login(filename, path, login) == null) {
             throw new NotFoundRequiredException("File with this name is not found");
         }
-        addSizeStorage(filename, login, path);
         fileRepository.deleteObjectDetailsByObjectLocation(path, login);
-    }
-
-
-    @Transactional
-    public void reduceSizeStorage(String login, int sizeObject) {
-        accountRepository.subtractBytesFromSizeStorage(login,sizeObject);
-    }
-    @Transactional
-    public void addSizeStorage(String filename, String login, String path) {
-        int sizeObject = fileRepository.findByObjectNameAndObjectLocationAndAccount_Login(filename, path, login).getObjectSize();
-        accountRepository.updateSizeStorageByLogin(login, sizeObject);
     }
 }

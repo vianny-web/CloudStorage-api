@@ -63,7 +63,9 @@ public class MainController {
                     .object(fullDirectory + "/" + file.getOriginalFilename())
                     .stream(inputStream, file.getSize(), -1)
                     .build());
+
             fileService.saveObject(file, fullDirectory, principal.getName());
+            accountService.reduceSizeStorage(principal.getName(), (int) file.getSize());
         }
         catch (Exception e) {
             throw new ServerErrorRequiredException(e.getMessage());
@@ -107,15 +109,16 @@ public class MainController {
                     .build();
             minioConfig.minioClient().removeObject(removeObjectArgs);
 
+            accountService.addSizeStorage(filename, principal.getName(), path);
             fileService.deleteObject(filename, path, principal.getName());
-
-            ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK, "File successfully deleted");
-            return new ResponseEntity<>(responseMessage, HttpStatus.OK);
         }
         catch (RuntimeException | ServerException | InsufficientDataException | ErrorResponseException | IOException |
                NoSuchAlgorithmException | InvalidKeyException | InvalidResponseException | XmlParserException |
                InternalException e) {
             throw new ServerErrorRequiredException(e.getMessage());
         }
+
+        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK, "File successfully deleted");
+        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
     }
 }
