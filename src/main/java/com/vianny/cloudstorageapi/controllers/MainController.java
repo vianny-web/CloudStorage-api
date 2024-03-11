@@ -17,6 +17,7 @@ import io.minio.errors.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -55,11 +56,12 @@ public class MainController {
                 throw new NoContentRequiredException("No file content");
             }
             String fullDirectory = principal.getName() + "/" + path;
+
             InputStream inputStream = file.getInputStream();
             minioConfig.minioClient().putObject(PutObjectArgs.builder()
                     .bucket(principal.getName())
-                    .object(fullDirectory)
-                    .stream(inputStream, inputStream.available(), -1)
+                    .object(fullDirectory + "/" + file.getOriginalFilename())
+                    .stream(inputStream, file.getSize(), -1)
                     .build());
             fileService.saveObject(file, fullDirectory, principal.getName());
         }
@@ -70,6 +72,7 @@ public class MainController {
         ResponseMessage responseMessage = new ResponseMessage(HttpStatus.CREATED, "File successfully uploaded");
         return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
     }
+
 
     @GetMapping("/propertiesFile")
     public ResponseEntity<ResponseObjectDetails<List<ObjectDetailsDTO>>> getPropertiesFile(@RequestParam("path") String path, @RequestParam("filename") String filename, Principal principal) {
