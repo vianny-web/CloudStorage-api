@@ -65,8 +65,8 @@ public class MainController {
                     .stream(inputStream, file.getSize(), -1)
                     .build());
 
-            fileService.saveObject(file, fullDirectory, principal.getName());
             accountService.reduceSizeStorage(principal.getName(), (int) file.getSize());
+            fileService.saveObject(file, fullDirectory, principal.getName());
         }
         catch (Exception e) {
             throw new ServerErrorRequiredException(e.getMessage());
