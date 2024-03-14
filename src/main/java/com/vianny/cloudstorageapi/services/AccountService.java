@@ -1,5 +1,6 @@
 package com.vianny.cloudstorageapi.services;
 
+import com.vianny.cloudstorageapi.dto.AccountDTO;
 import com.vianny.cloudstorageapi.exception.requiredException.NoStorageSpaceRequiredException;
 import com.vianny.cloudstorageapi.models.Account;
 import com.vianny.cloudstorageapi.repositories.AccountRepository;
@@ -11,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class AccountService implements UserDetailsService {
@@ -32,6 +35,11 @@ public class AccountService implements UserDetailsService {
         ));
 
         return UserDetailsImpl.build(account);
+    }
+
+    @Transactional
+    public List<AccountDTO> getAccountDetails (String login) {
+        return accountRepository.getAccountDetailsByLogin(login);
     }
 
     @Transactional
