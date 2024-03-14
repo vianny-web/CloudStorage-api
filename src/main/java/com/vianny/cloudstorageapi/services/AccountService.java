@@ -1,5 +1,6 @@
 package com.vianny.cloudstorageapi.services;
 
+import com.vianny.cloudstorageapi.exception.requiredException.NoStorageSpaceRequiredException;
 import com.vianny.cloudstorageapi.models.Account;
 import com.vianny.cloudstorageapi.repositories.AccountRepository;
 import com.vianny.cloudstorageapi.repositories.FileRepository;
@@ -35,7 +36,13 @@ public class AccountService implements UserDetailsService {
 
     @Transactional
     public void reduceSizeStorage(String login, int sizeObject) {
-        accountRepository.subtractBytesFromSizeStorage(login,sizeObject);
+        if (accountRepository.findSizeStorageByLogin(login) >= sizeObject)
+        {
+            accountRepository.subtractBytesFromSizeStorage(login,sizeObject);
+        }
+        else {
+            throw new NoStorageSpaceRequiredException("No storage space available for file upload");
+        }
     }
     @Transactional
     public void addSizeStorage(String filename, String login, String path) {

@@ -12,6 +12,9 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     Optional<Account> findUserByLogin(String login);
     Boolean existsUserByLogin(String login);
 
+    @Query("SELECT account.size_storage FROM Account account WHERE account.login = :login")
+    int findSizeStorageByLogin(@Param("login") String login);
+
     @Modifying
     @Query("UPDATE Account u SET u.size_storage = u.size_storage - :bytesToSubtract WHERE u.login = :login")
     void subtractBytesFromSizeStorage(@Param("login") String login, @Param("bytesToSubtract") int bytesToSubtract);

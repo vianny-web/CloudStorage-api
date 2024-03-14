@@ -68,6 +68,12 @@ public class CustomExceptionHandler {
         return new ResponseDataException(HttpStatus.NO_CONTENT, exception.getMessage());
     }
 
+    @ExceptionHandler(NoStorageSpaceRequiredException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseDataException handlerNoStorageSpaceException (NoStorageSpaceRequiredException exception) {
+        return new ResponseDataException(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
     @ExceptionHandler(ServerErrorRequiredException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseDataException handlerServerErrorException (ServerErrorRequiredException exception) {
