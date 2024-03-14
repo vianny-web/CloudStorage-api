@@ -1,8 +1,10 @@
 package com.vianny.cloudstorageapi.controllers;
 
 import com.vianny.cloudstorageapi.config.MinioConfig;
+import com.vianny.cloudstorageapi.dto.AccountDTO;
 import com.vianny.cloudstorageapi.dto.ObjectDetailsDTO;
 import com.vianny.cloudstorageapi.dto.ObjectsInfoDTO;
+import com.vianny.cloudstorageapi.dto.response.ResponseAccountDetails;
 import com.vianny.cloudstorageapi.dto.response.ResponseAllObjects;
 import com.vianny.cloudstorageapi.dto.response.ResponseMessage;
 import com.vianny.cloudstorageapi.dto.response.ResponseObjectDetails;
@@ -76,6 +78,17 @@ public class MainController {
         return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
     }
 
+    @GetMapping("/account/details")
+    public ResponseEntity<ResponseAccountDetails<List<AccountDTO>>> getPropertiesFile(Principal principal) {
+        try {
+            List<AccountDTO> accountDetails = accountService.getAccountDetails(principal.getName());
+            ResponseAccountDetails<List<AccountDTO>> dataObject = new ResponseAccountDetails<>(HttpStatus.FOUND, accountDetails);
+            return new ResponseEntity<>(dataObject,HttpStatus.OK);
+        }
+        catch (Exception e) {
+            throw new ServerErrorRequiredException(e.getMessage());
+        }
+    }
 
     @GetMapping("/propertiesFile")
     public ResponseEntity<ResponseObjectDetails<List<ObjectDetailsDTO>>> getPropertiesFile(@RequestParam("path") String path, @RequestParam("filename") String filename, Principal principal) {
