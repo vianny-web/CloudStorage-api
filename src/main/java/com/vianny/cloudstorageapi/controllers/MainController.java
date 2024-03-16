@@ -10,14 +10,18 @@ import com.vianny.cloudstorageapi.dto.response.ResponseMessage;
 import com.vianny.cloudstorageapi.dto.response.ResponseObjectDetails;
 import com.vianny.cloudstorageapi.exception.requiredException.NoAccessRequiredException;
 import com.vianny.cloudstorageapi.exception.requiredException.NoContentRequiredException;
+import com.vianny.cloudstorageapi.exception.requiredException.NotFoundRequiredException;
 import com.vianny.cloudstorageapi.exception.requiredException.ServerErrorRequiredException;
 import com.vianny.cloudstorageapi.services.AccountService;
 import com.vianny.cloudstorageapi.services.FileService;
-import io.minio.PutObjectArgs;
-import io.minio.RemoveObjectArgs;
+import io.minio.*;
 import io.minio.errors.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -76,6 +80,29 @@ public class MainController {
 
         ResponseMessage responseMessage = new ResponseMessage(HttpStatus.CREATED, "File successfully uploaded");
         return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/download/")
+    public ResponseEntity<Resource> downloadFile(@RequestParam String path, Principal principal) {
+        try {
+            InputStream fileStream = minioConfig.minioClient().getObject(
+                    GetObjectArgs.builder()
+                            .bucket(principal.getName())
+                            .object(path)
+                            .build()
+            );
+            InputStreamResource resource = new InputStreamResource(fileStream);
+
+            HttpHeaders downloadHeaders = new HttpHeaders();
+            downloadHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            downloadHeaders.setContentDispositionFormData("attachment", path);
+
+            return ResponseEntity.ok()
+                    .headers(downloadHeaders)
+                    .body(resource);
+        } catch (Exception e) {
+            throw new ServerErrorRequiredException(e.getMessage());
+        }
     }
 
     @GetMapping("/account/details")
