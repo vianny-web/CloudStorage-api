@@ -8,6 +8,7 @@ import com.vianny.cloudstorageapi.repositories.AccountRepository;
 import com.vianny.cloudstorageapi.repositories.ObjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -25,7 +26,12 @@ public class FolderService {
         this.accountRepository = accountRepository;
     }
 
+    @Transactional
     public void saveFolder(String folderName, String path, String login) {
+        if (objectRepository.findByObjectNameAndObjectLocationAndAccount_Login(folderName,login  + "/" + path, login) != null) {
+            throw new ConflictRequiredException("A folder with this name already exists in this directory");
+        }
+
         ObjectDetails objectDetails = new ObjectDetails();
         Optional<Account> currentAccount = accountRepository.findUserByLogin(login);
 
