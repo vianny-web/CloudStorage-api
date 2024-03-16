@@ -113,7 +113,6 @@ public class MainController {
     }
 
     @PostMapping("/createFolder")
-    @Transactional
     public ResponseEntity<ResponseMessage> createFolder(@RequestBody RequestFolder requestFolder, Principal principal) {
         try {
             folderService.saveFolder(requestFolder.getFolderName(), requestFolder.getPath(), principal.getName());
@@ -123,6 +122,19 @@ public class MainController {
         }
 
         ResponseMessage responseMessage = new ResponseMessage(HttpStatus.CREATED, "Folder successfully created");
+        return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/deleteFolder/")
+    public ResponseEntity<ResponseMessage> deleteFolder(@RequestParam("path") String path, @RequestParam("folderName") String filename, Principal principal) {
+        try {
+
+        }
+        catch (Exception e) {
+            throw new ServerErrorRequiredException(e.getMessage());
+        }
+
+        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.CREATED, "Folder successfully delete");
         return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
     }
 
