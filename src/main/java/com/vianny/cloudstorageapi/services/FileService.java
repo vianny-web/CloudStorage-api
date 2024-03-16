@@ -36,7 +36,7 @@ public class FileService {
         ObjectDetails objectDetails = new ObjectDetails();
         Optional<Account> currentAccount = accountRepository.findUserByLogin(login);
 
-        if (objectRepository.findByObjectNameAndObjectLocationAndAccount_Login(file.getOriginalFilename(),path,login) != null) {
+        if (objectRepository.findByObjectNameAndObjectTypeAndObjectLocationAndAccount_Login(file.getOriginalFilename(), TypeObject.File, path,login) != null) {
             throw new ConflictRequiredException("A file with this name already exists in this directory");
         }
 
@@ -65,7 +65,7 @@ public class FileService {
 
     @Transactional
     public void deleteObject(String filename, String path, String login) {
-        if (objectRepository.findByObjectNameAndObjectLocationAndAccount_Login(filename, path, login) == null) {
+        if (objectRepository.findByObjectNameAndObjectTypeAndObjectLocationAndAccount_Login(filename, TypeObject.File, path, login) == null) {
             throw new NotFoundRequiredException("File with this name is not found");
         }
         objectRepository.deleteObjectDetailsByObjectLocation(filename, TypeObject.File, path, login);

@@ -12,8 +12,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ObjectRepository extends JpaRepository<ObjectDetails, Long> {
-    ObjectDetails findByObjectLocationAndAccount_Login(String objectLocation, String login);
     ObjectDetails findByObjectNameAndObjectLocationAndAccount_Login(String objectName, String objectLocation, String login);
+    ObjectDetails findByObjectNameAndObjectTypeAndObjectLocationAndAccount_Login(String objectName, TypeObject objectType, String objectLocation, String login);
     @Modifying
     @Query("DELETE FROM ObjectDetails od WHERE od.objectName = :objectName AND od.objectType = :objectType AND od.objectLocation = :objectLocation AND od.account.login = :login")
     void deleteObjectDetailsByObjectLocation(String objectName, TypeObject objectType, String objectLocation, String login);

@@ -29,7 +29,7 @@ public class FolderService {
 
     @Transactional
     public void saveFolder(String folderName, String path, String login) {
-        if (objectRepository.findByObjectNameAndObjectLocationAndAccount_Login(folderName,login  + "/" + path, login) != null) {
+        if (objectRepository.findByObjectNameAndObjectTypeAndObjectLocationAndAccount_Login(folderName, TypeObject.Folder,login  + "/" + path, login) != null) {
             throw new ConflictRequiredException("A folder with this name already exists in this directory");
         }
 
@@ -48,7 +48,7 @@ public class FolderService {
 
     @Transactional
     public void deleteFolder(String filename, String path, String login) {
-        if (objectRepository.findByObjectNameAndObjectLocationAndAccount_Login(filename, path, login) == null) {
+        if (objectRepository.findByObjectNameAndObjectTypeAndObjectLocationAndAccount_Login(filename, TypeObject.Folder, path, login) == null) {
             throw new NotFoundRequiredException("Folder with this name is not found");
         }
         objectRepository.deleteObjectDetailsByObjectLocation(filename, TypeObject.Folder, path, login);
