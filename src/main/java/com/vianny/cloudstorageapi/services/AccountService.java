@@ -1,6 +1,7 @@
 package com.vianny.cloudstorageapi.services;
 
 import com.vianny.cloudstorageapi.dto.AccountDTO;
+import com.vianny.cloudstorageapi.enums.TypeObject;
 import com.vianny.cloudstorageapi.exception.requiredException.NoStorageSpaceRequiredException;
 import com.vianny.cloudstorageapi.models.Account;
 import com.vianny.cloudstorageapi.repositories.AccountRepository;
@@ -54,7 +55,7 @@ public class AccountService implements UserDetailsService {
     }
     @Transactional
     public void addSizeStorage(String filename, String login, String path) {
-        int sizeObject = objectRepository.findByObjectNameAndObjectLocationAndAccount_Login(filename, path, login).getObjectSize();
+        int sizeObject = objectRepository.findObjectDetailsByType(filename, TypeObject.File, path, login).getObjectSize();
         accountRepository.updateSizeStorageByLogin(login, sizeObject);
     }
 }

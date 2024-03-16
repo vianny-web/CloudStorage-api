@@ -52,7 +52,7 @@ public class FileService {
 
     @Transactional
     public List<ObjectDetailsDTO> getObject(String filename, String path, String login) {
-        if (objectRepository.findByObjectNameAndObjectLocationAndAccount_Login(filename, path, login) == null) {
+        if (objectRepository.findObjectDetailsByType(filename, TypeObject.File, path, login) == null) {
             throw new NotFoundRequiredException("File with this name is not found");
         }
         return objectRepository.getObjectDetailsByObjectLocation(filename, path, login);
