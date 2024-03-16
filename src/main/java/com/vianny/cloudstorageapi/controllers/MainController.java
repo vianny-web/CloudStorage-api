@@ -100,9 +100,12 @@ public class MainController {
             return ResponseEntity.ok()
                     .headers(downloadHeaders)
                     .body(resource);
-        } catch (Exception e) {
-            throw new ServerErrorRequiredException(e.getMessage());
+        } catch (IOException | ErrorResponseException | InsufficientDataException | InternalException |
+                 InvalidKeyException | InvalidResponseException | NoSuchAlgorithmException | ServerException |
+                 XmlParserException e) {
+            throw new NotFoundRequiredException(e.getMessage());
         }
+
     }
 
     @GetMapping("/account/details")
