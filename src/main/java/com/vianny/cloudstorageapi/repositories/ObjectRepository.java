@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface FileRepository extends JpaRepository<ObjectDetails, Long> {
+public interface ObjectRepository extends JpaRepository<ObjectDetails, Long> {
     ObjectDetails findByObjectLocationAndAccount_Login(String objectLocation, String login);
     ObjectDetails findByObjectNameAndObjectLocationAndAccount_Login(String objectName, String objectLocation, String login);
     @Modifying

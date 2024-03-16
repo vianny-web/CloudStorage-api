@@ -4,7 +4,7 @@ import com.vianny.cloudstorageapi.dto.AccountDTO;
 import com.vianny.cloudstorageapi.exception.requiredException.NoStorageSpaceRequiredException;
 import com.vianny.cloudstorageapi.models.Account;
 import com.vianny.cloudstorageapi.repositories.AccountRepository;
-import com.vianny.cloudstorageapi.repositories.FileRepository;
+import com.vianny.cloudstorageapi.repositories.ObjectRepository;
 import com.vianny.cloudstorageapi.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,14 +18,14 @@ import java.util.List;
 @Service
 public class AccountService implements UserDetailsService {
     private AccountRepository accountRepository;
-    private FileRepository fileRepository;
+    private ObjectRepository objectRepository;
     @Autowired
     public void setUserRepository(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
     }
     @Autowired
-    public void setFileRepository(FileRepository fileRepository) {
-        this.fileRepository = fileRepository;
+    public void setFileRepository(ObjectRepository objectRepository) {
+        this.objectRepository = objectRepository;
     }
 
     @Override
@@ -54,7 +54,7 @@ public class AccountService implements UserDetailsService {
     }
     @Transactional
     public void addSizeStorage(String filename, String login, String path) {
-        int sizeObject = fileRepository.findByObjectNameAndObjectLocationAndAccount_Login(filename, path, login).getObjectSize();
+        int sizeObject = objectRepository.findByObjectNameAndObjectLocationAndAccount_Login(filename, path, login).getObjectSize();
         accountRepository.updateSizeStorageByLogin(login, sizeObject);
     }
 }
