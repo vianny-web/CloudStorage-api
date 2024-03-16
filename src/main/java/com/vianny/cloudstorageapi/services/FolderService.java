@@ -2,6 +2,7 @@ package com.vianny.cloudstorageapi.services;
 
 import com.vianny.cloudstorageapi.enums.TypeObject;
 import com.vianny.cloudstorageapi.exception.requiredException.ConflictRequiredException;
+import com.vianny.cloudstorageapi.exception.requiredException.NotFoundRequiredException;
 import com.vianny.cloudstorageapi.models.Account;
 import com.vianny.cloudstorageapi.models.ObjectDetails;
 import com.vianny.cloudstorageapi.repositories.AccountRepository;
@@ -43,5 +44,13 @@ public class FolderService {
         objectDetails.setAccount(currentAccount.orElseThrow());
 
         objectRepository.save(objectDetails);
+    }
+
+    @Transactional
+    public void deleteFolder(String filename, String path, String login) {
+        if (objectRepository.findByObjectNameAndObjectLocationAndAccount_Login(filename, path, login) == null) {
+            throw new NotFoundRequiredException("Folder with this name is not found");
+        }
+        objectRepository.deleteObjectDetailsByObjectLocation(path, login);
     }
 }

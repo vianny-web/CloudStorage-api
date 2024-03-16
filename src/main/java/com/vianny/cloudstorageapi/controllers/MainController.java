@@ -126,9 +126,9 @@ public class MainController {
     }
 
     @DeleteMapping("/deleteFolder/")
-    public ResponseEntity<ResponseMessage> deleteFolder(@RequestParam("path") String path, @RequestParam("folderName") String filename, Principal principal) {
+    public ResponseEntity<ResponseMessage> deleteFolder(@RequestParam("path") String path, @RequestParam("folderName") String folderName, Principal principal) {
         try {
-
+            folderService.deleteFolder(folderName, path, principal.getName());
         }
         catch (Exception e) {
             throw new ServerErrorRequiredException(e.getMessage());
