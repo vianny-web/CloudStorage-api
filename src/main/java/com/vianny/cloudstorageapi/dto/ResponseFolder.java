@@ -1,10 +1,10 @@
 package com.vianny.cloudstorageapi.dto;
 
-public class FolderDTO {
+public class ResponseFolder {
     private String folderName;
     private String path;
 
-    public FolderDTO(String folderName, String path) {
+    public ResponseFolder(String folderName, String path) {
         this.folderName = folderName;
         this.path = path;
     }
