@@ -68,6 +68,6 @@ public class FileService {
         if (objectRepository.findByObjectNameAndObjectLocationAndAccount_Login(filename, path, login) == null) {
             throw new NotFoundRequiredException("File with this name is not found");
         }
-        objectRepository.deleteObjectDetailsByObjectLocation(path, login);
+        objectRepository.deleteObjectDetailsByObjectLocation(filename, TypeObject.File, path, login);
     }
 }

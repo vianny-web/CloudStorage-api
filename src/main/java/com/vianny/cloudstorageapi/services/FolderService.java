@@ -51,6 +51,6 @@ public class FolderService {
         if (objectRepository.findByObjectNameAndObjectLocationAndAccount_Login(filename, path, login) == null) {
             throw new NotFoundRequiredException("Folder with this name is not found");
         }
-        objectRepository.deleteObjectDetailsByObjectLocation(path, login);
+        objectRepository.deleteObjectDetailsByObjectLocation(filename, TypeObject.Folder, path, login);
     }
 }

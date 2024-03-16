@@ -2,6 +2,7 @@ package com.vianny.cloudstorageapi.repositories;
 
 import com.vianny.cloudstorageapi.dto.ObjectDetailsDTO;
 import com.vianny.cloudstorageapi.dto.ObjectsInfoDTO;
+import com.vianny.cloudstorageapi.enums.TypeObject;
 import com.vianny.cloudstorageapi.models.ObjectDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -14,8 +15,8 @@ public interface ObjectRepository extends JpaRepository<ObjectDetails, Long> {
     ObjectDetails findByObjectLocationAndAccount_Login(String objectLocation, String login);
     ObjectDetails findByObjectNameAndObjectLocationAndAccount_Login(String objectName, String objectLocation, String login);
     @Modifying
-    @Query("DELETE FROM ObjectDetails od WHERE od.objectLocation = :objectLocation AND od.account.login = :login")
-    void deleteObjectDetailsByObjectLocation(String objectLocation, String login);
+    @Query("DELETE FROM ObjectDetails od WHERE od.objectName = :objectName AND od.objectType = :objectType AND od.objectLocation = :objectLocation AND od.account.login = :login")
+    void deleteObjectDetailsByObjectLocation(String objectName, TypeObject objectType, String objectLocation, String login);
 
     @Query("SELECT new com.vianny.cloudstorageapi.dto.ObjectDetailsDTO(od.objectName, od.objectType, od.objectLocation, od.objectSize, od.uploadDate) " +
             "FROM ObjectDetails od WHERE od.objectName = :objectName AND od.objectLocation = :objectLocation AND od.account.login = :login")
