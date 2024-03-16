@@ -4,16 +4,17 @@ import com.vianny.cloudstorageapi.config.MinioConfig;
 import com.vianny.cloudstorageapi.dto.AccountDTO;
 import com.vianny.cloudstorageapi.dto.ObjectDetailsDTO;
 import com.vianny.cloudstorageapi.dto.ObjectsInfoDTO;
+import com.vianny.cloudstorageapi.dto.request.RequestFolder;
 import com.vianny.cloudstorageapi.dto.response.ResponseAccountDetails;
 import com.vianny.cloudstorageapi.dto.response.ResponseAllObjects;
 import com.vianny.cloudstorageapi.dto.response.ResponseMessage;
 import com.vianny.cloudstorageapi.dto.response.ResponseObjectDetails;
-import com.vianny.cloudstorageapi.exception.requiredException.NoAccessRequiredException;
 import com.vianny.cloudstorageapi.exception.requiredException.NoContentRequiredException;
 import com.vianny.cloudstorageapi.exception.requiredException.NotFoundRequiredException;
 import com.vianny.cloudstorageapi.exception.requiredException.ServerErrorRequiredException;
 import com.vianny.cloudstorageapi.services.AccountService;
 import com.vianny.cloudstorageapi.services.FileService;
+import com.vianny.cloudstorageapi.services.FolderService;
 import io.minio.*;
 import io.minio.errors.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +27,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.server.ServerErrorException;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
@@ -42,6 +42,7 @@ public class MainController {
     private MinioConfig minioConfig;
     private FileService fileService;
     private AccountService accountService;
+    private FolderService folderService;
     @Autowired
     public void setMinioConfig(MinioConfig minioConfig) {
         this.minioConfig = minioConfig;
@@ -53,6 +54,10 @@ public class MainController {
     @Autowired
     public void setAccountService(AccountService accountService) {
         this.accountService = accountService;
+    }
+    @Autowired
+    public void setFolderService(FolderService folderService) {
+        this.folderService = folderService;
     }
 
     @PostMapping("/upload")
@@ -105,7 +110,20 @@ public class MainController {
                  XmlParserException e) {
             throw new NotFoundRequiredException(e.getMessage());
         }
+    }
 
+    @PostMapping("/createFolder")
+    @Transactional
+    public ResponseEntity<ResponseMessage> createFolder(@RequestBody RequestFolder requestFolder, Principal principal) {
+        try {
+            folderService.saveFolder(requestFolder.getFolderName(), requestFolder.getPath(), principal.getName());
+        }
+        catch (Exception e) {
+            throw new ServerErrorRequiredException(e.getMessage());
+        }
+
+        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.CREATED, "Folder successfully created");
+        return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
     }
 
     @GetMapping("/account/details")

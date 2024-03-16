@@ -25,14 +25,14 @@ public class FolderService {
         this.accountRepository = accountRepository;
     }
 
-    private void saveFolder(String folderName, String path, String login) {
+    public void saveFolder(String folderName, String path, String login) {
         ObjectDetails objectDetails = new ObjectDetails();
         Optional<Account> currentAccount = accountRepository.findUserByLogin(login);
 
         objectDetails.setObjectName(folderName);
         objectDetails.setObjectType(TypeObject.Folder);
         objectDetails.setObjectSize(0);
-        objectDetails.setObjectLocation(path);
+        objectDetails.setObjectLocation(login + "/" + path);
         objectDetails.setUploadDate(LocalDateTime.now());
         objectDetails.setAccount(currentAccount.orElseThrow());
 
