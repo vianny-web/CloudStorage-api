@@ -32,7 +32,7 @@ public class FileService {
     }
 
     @Transactional
-    public void saveObject(MultipartFile file, String path, String login) {
+    public void saveFile(MultipartFile file, String path, String login) {
         ObjectDetails objectDetails = new ObjectDetails();
         Optional<Account> currentAccount = accountRepository.findUserByLogin(login);
 
@@ -64,7 +64,7 @@ public class FileService {
     }
 
     @Transactional
-    public void deleteObject(String filename, String path, String login) {
+    public void deleteFile(String filename, String path, String login) {
         if (objectRepository.findByObjectNameAndObjectTypeAndObjectLocationAndAccount_Login(filename, TypeObject.File, path, login) == null) {
             throw new NotFoundRequiredException("File with this name is not found");
         }

@@ -28,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
@@ -77,7 +76,7 @@ public class MainController {
                     .build());
 
             accountService.reduceSizeStorage(principal.getName(), (int) file.getSize());
-            fileService.saveObject(file, fullDirectory, principal.getName());
+            fileService.saveFile(file, fullDirectory, principal.getName());
         }
         catch (Exception e) {
             throw new ServerErrorRequiredException(e.getMessage());
@@ -185,7 +184,7 @@ public class MainController {
             minioConfig.minioClient().removeObject(removeObjectArgs);
 
             accountService.addSizeStorage(filename, principal.getName(), path);
-            fileService.deleteObject(filename, path, principal.getName());
+            fileService.deleteFile(filename, path, principal.getName());
         }
         catch (RuntimeException | ServerException | InsufficientDataException | ErrorResponseException | IOException |
                NoSuchAlgorithmException | InvalidKeyException | InvalidResponseException | XmlParserException |
