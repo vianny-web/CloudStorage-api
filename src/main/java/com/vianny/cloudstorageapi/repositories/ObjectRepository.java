@@ -20,8 +20,8 @@ public interface ObjectRepository extends JpaRepository<ObjectDetails, Long> {
     void deleteObjectDetailsByObjectLocation(String objectName, TypeObject objectType, String objectLocation, String login);
 
     @Query("SELECT new com.vianny.cloudstorageapi.dto.ObjectDetailsDTO(od.objectName, od.objectType, od.objectLocation, od.objectSize, od.uploadDate) " +
-            "FROM ObjectDetails od WHERE od.objectName = :objectName AND od.objectLocation = :objectLocation AND od.account.login = :login")
-    List<ObjectDetailsDTO> getObjectDetailsByObjectLocation(@Param("objectName") String objectName, @Param("objectLocation") String objectLocation, @Param("login") String login);
+            "FROM ObjectDetails od WHERE od.objectName = :objectName AND od.objectType = :objectType AND od.objectLocation = :objectLocation AND od.account.login = :login")
+    List<ObjectDetailsDTO> getObjectDetailsByObjectLocation(@Param("objectName") String objectName, @Param("objectType") TypeObject objectType, @Param("objectLocation") String objectLocation, @Param("login") String login);
 
     @Query("SELECT new com.vianny.cloudstorageapi.dto.ObjectsInfoDTO(od.objectName, od.objectType) FROM ObjectDetails od WHERE od.objectLocation = :objectLocation AND od.account.login = :login")
     List<ObjectsInfoDTO> getObjectsNameByObjectLocation(@Param("objectLocation") String objectLocation, @Param("login") String login);

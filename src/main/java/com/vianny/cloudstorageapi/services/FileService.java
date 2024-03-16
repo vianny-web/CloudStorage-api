@@ -55,7 +55,7 @@ public class FileService {
         if (objectRepository.findObjectDetailsByType(filename, TypeObject.File, path, login) == null) {
             throw new NotFoundRequiredException("File with this name is not found");
         }
-        return objectRepository.getObjectDetailsByObjectLocation(filename, path, login);
+        return objectRepository.getObjectDetailsByObjectLocation(filename, TypeObject.File, path, login);
     }
 
     @Transactional
