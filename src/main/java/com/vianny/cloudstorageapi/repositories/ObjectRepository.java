@@ -17,7 +17,7 @@ public interface ObjectRepository extends JpaRepository<ObjectDetails, Long> {
     ObjectDetails findByObjectNameAndObjectTypeAndObjectLocationAndAccount_Login(String objectName, TypeObject objectType, String objectLocation, String login);
     @Modifying
     @Query("DELETE FROM ObjectDetails od WHERE od.objectName = :objectName AND od.objectType = :objectType AND od.objectLocation = :objectLocation AND od.account.login = :login")
-    void deleteObjectDetailsByObjectLocation(String objectName, TypeObject objectType, String objectLocation, String login);
+    void deleteByObjectLocation(String objectName, TypeObject objectType, String objectLocation, String login);
 
     @Query("SELECT new com.vianny.cloudstorageapi.dto.ObjectDetailsDTO(od.objectName, od.objectType, od.objectLocation, od.objectSize, od.uploadDate) " +
             "FROM ObjectDetails od WHERE od.objectName = :objectName AND od.objectType = :objectType AND od.objectLocation = :objectLocation AND od.account.login = :login")
