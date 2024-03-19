@@ -1,11 +1,8 @@
 package com.vianny.cloudstorageapi.controllers;
 
 import com.vianny.cloudstorageapi.config.MinioConfig;
-import com.vianny.cloudstorageapi.dto.AccountDTO;
 import com.vianny.cloudstorageapi.dto.ObjectDetailsDTO;
 import com.vianny.cloudstorageapi.dto.ObjectsInfoDTO;
-import com.vianny.cloudstorageapi.dto.request.RequestFolder;
-import com.vianny.cloudstorageapi.dto.response.ResponseAccountDetails;
 import com.vianny.cloudstorageapi.dto.response.ResponseAllObjects;
 import com.vianny.cloudstorageapi.dto.response.ResponseMessage;
 import com.vianny.cloudstorageapi.dto.response.ResponseObjectDetails;
@@ -14,8 +11,9 @@ import com.vianny.cloudstorageapi.exception.requiredException.NotFoundRequiredEx
 import com.vianny.cloudstorageapi.exception.requiredException.ServerErrorRequiredException;
 import com.vianny.cloudstorageapi.services.AccountService;
 import com.vianny.cloudstorageapi.services.FileService;
-import com.vianny.cloudstorageapi.services.FolderService;
-import io.minio.*;
+import io.minio.GetObjectArgs;
+import io.minio.PutObjectArgs;
+import io.minio.RemoveObjectArgs;
 import io.minio.errors.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -37,11 +35,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/myCloud")
-public class MainController {
+public class FIleController {
     private MinioConfig minioConfig;
     private FileService fileService;
     private AccountService accountService;
-    private FolderService folderService;
     @Autowired
     public void setMinioConfig(MinioConfig minioConfig) {
         this.minioConfig = minioConfig;
@@ -53,10 +50,6 @@ public class MainController {
     @Autowired
     public void setAccountService(AccountService accountService) {
         this.accountService = accountService;
-    }
-    @Autowired
-    public void setFolderService(FolderService folderService) {
-        this.folderService = folderService;
     }
 
     @PostMapping("/upload")
@@ -108,44 +101,6 @@ public class MainController {
                  InvalidKeyException | InvalidResponseException | NoSuchAlgorithmException | ServerException |
                  XmlParserException e) {
             throw new NotFoundRequiredException(e.getMessage());
-        }
-    }
-
-    @PostMapping("/createFolder")
-    public ResponseEntity<ResponseMessage> createFolder(@RequestBody RequestFolder requestFolder, Principal principal) {
-        try {
-            folderService.saveFolder(requestFolder.getFolderName(), requestFolder.getPath(), principal.getName());
-        }
-        catch (Exception e) {
-            throw new ServerErrorRequiredException(e.getMessage());
-        }
-
-        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.CREATED, "Folder successfully created");
-        return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
-    }
-
-    @DeleteMapping("/deleteFolder/")
-    public ResponseEntity<ResponseMessage> deleteFolder(@RequestParam("path") String path, @RequestParam("folderName") String folderName, Principal principal) {
-        try {
-            folderService.deleteFolder(folderName, path, principal.getName());
-        }
-        catch (Exception e) {
-            throw new ServerErrorRequiredException(e.getMessage());
-        }
-
-        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.CREATED, "Folder successfully delete");
-        return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
-    }
-
-    @GetMapping("/account/details")
-    public ResponseEntity<ResponseAccountDetails<List<AccountDTO>>> getPropertiesFile(Principal principal) {
-        try {
-            List<AccountDTO> accountDetails = accountService.getAccountDetails(principal.getName());
-            ResponseAccountDetails<List<AccountDTO>> dataObject = new ResponseAccountDetails<>(HttpStatus.FOUND, accountDetails);
-            return new ResponseEntity<>(dataObject,HttpStatus.OK);
-        }
-        catch (Exception e) {
-            throw new ServerErrorRequiredException(e.getMessage());
         }
     }
 
