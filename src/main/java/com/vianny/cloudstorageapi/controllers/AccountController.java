@@ -1,12 +1,9 @@
 package com.vianny.cloudstorageapi.controllers;
 
-import com.vianny.cloudstorageapi.config.MinioConfig;
 import com.vianny.cloudstorageapi.dto.AccountDTO;
 import com.vianny.cloudstorageapi.dto.response.ResponseAccountDetails;
 import com.vianny.cloudstorageapi.exception.requiredException.ServerErrorRequiredException;
 import com.vianny.cloudstorageapi.services.AccountService;
-import com.vianny.cloudstorageapi.services.FileService;
-import com.vianny.cloudstorageapi.services.FolderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +24,7 @@ public class AccountController {
     }
 
     @GetMapping("/account/details")
-    public ResponseEntity<ResponseAccountDetails<List<AccountDTO>>> getPropertiesFile(Principal principal) {
+    public ResponseEntity<ResponseAccountDetails<List<AccountDTO>>> getPropertiesAccount(Principal principal) {
         try {
             List<AccountDTO> accountDetails = accountService.getAccountDetails(principal.getName());
             ResponseAccountDetails<List<AccountDTO>> dataObject = new ResponseAccountDetails<>(HttpStatus.FOUND, accountDetails);
