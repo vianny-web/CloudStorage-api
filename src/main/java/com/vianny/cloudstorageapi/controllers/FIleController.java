@@ -9,8 +9,8 @@ import com.vianny.cloudstorageapi.dto.response.ResponseObjectDetails;
 import com.vianny.cloudstorageapi.exception.requiredException.*;
 import com.vianny.cloudstorageapi.services.AccountService;
 import com.vianny.cloudstorageapi.services.FileService;
+import com.vianny.cloudstorageapi.services.FileTransferService;
 import io.minio.GetObjectArgs;
-import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
 import io.minio.errors.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,14 +36,19 @@ import java.util.List;
 public class FIleController {
     private MinioConfig minioConfig;
     private FileService fileService;
+    private FileTransferService fileTransferService;
     private AccountService accountService;
     @Autowired
     public void setMinioConfig(MinioConfig minioConfig) {
         this.minioConfig = minioConfig;
     }
     @Autowired
-    public void setObjectService(FileService fileService) {
+    public void setFileService(FileService fileService) {
         this.fileService = fileService;
+    }
+    @Autowired
+    public void setFileTransferService(FileTransferService fileTransferService) {
+        this.fileTransferService = fileTransferService;
     }
     @Autowired
     public void setAccountService(AccountService accountService) {
@@ -52,24 +57,15 @@ public class FIleController {
 
     @PostMapping("/upload")
     @Transactional
-    public ResponseEntity<ResponseMessage> uploadFile(@RequestParam MultipartFile file, @RequestParam String path, Principal principal) {
+    public ResponseEntity<ResponseMessage> uploadFileToTheServer(@RequestParam MultipartFile file, @RequestParam String path, Principal principal) {
         try {
-            if (file.isEmpty()) {
-                throw new NoContentRequiredException("No file content");
-            }
             String fullDirectory = principal.getName() + "/" + path;
 
-            InputStream inputStream = file.getInputStream();
-            minioConfig.minioClient().putObject(PutObjectArgs.builder()
-                    .bucket(principal.getName())
-                    .object(fullDirectory + "/" + file.getOriginalFilename())
-                    .stream(inputStream, file.getSize(), -1)
-                    .build());
-
+            fileTransferService.uploadFile(file, fullDirectory, principal.getName());
             accountService.reduceSizeStorage(principal.getName(), (int) file.getSize());
             fileService.saveFile(file, fullDirectory, principal.getName());
         }
-        catch (NoStorageSpaceRequiredException | ConflictRequiredException e) {
+        catch (NoContentRequiredException | NoStorageSpaceRequiredException | ConflictRequiredException e) {
             throw e;
         }
         catch (Exception e) {
@@ -81,15 +77,10 @@ public class FIleController {
     }
 
     @GetMapping("/download/")
-    public ResponseEntity<Resource> downloadFile(@RequestParam String path, Principal principal) {
+    public ResponseEntity<Resource> downloadFileFromTheServer(@RequestParam String path, Principal principal) {
         try {
-            InputStream fileStream = minioConfig.minioClient().getObject(
-                    GetObjectArgs.builder()
-                            .bucket(principal.getName())
-                            .object(path)
-                            .build()
-            );
-            InputStreamResource resource = new InputStreamResource(fileStream);
+            InputStreamResource resource = fileTransferService.downloadFile(principal.getName(), path);
+            System.out.println(resource.isFile());
 
             HttpHeaders downloadHeaders = new HttpHeaders();
             downloadHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
@@ -98,7 +89,8 @@ public class FIleController {
             return ResponseEntity.ok()
                     .headers(downloadHeaders)
                     .body(resource);
-        } catch (IOException | ErrorResponseException | InsufficientDataException | InternalException |
+        }
+        catch (IOException | ErrorResponseException | InsufficientDataException | InternalException |
                  InvalidKeyException | InvalidResponseException | NoSuchAlgorithmException | ServerException |
                  XmlParserException e) {
             throw new ServerErrorRequiredException(e.getMessage());
