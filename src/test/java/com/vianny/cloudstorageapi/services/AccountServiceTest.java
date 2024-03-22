@@ -1,8 +1,11 @@
 package com.vianny.cloudstorageapi.services;
 
 import com.vianny.cloudstorageapi.dto.AccountDTO;
+import com.vianny.cloudstorageapi.enums.TypeObject;
 import com.vianny.cloudstorageapi.exception.requiredException.NoStorageSpaceRequiredException;
+import com.vianny.cloudstorageapi.models.ObjectDetails;
 import com.vianny.cloudstorageapi.repositories.AccountRepository;
+import com.vianny.cloudstorageapi.repositories.ObjectRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,8 +26,11 @@ public class AccountServiceTest {
 
     @Mock
     private AccountRepository accountRepository;
+    @Mock
+    private ObjectRepository objectRepository;
     @InjectMocks
     private AccountService accountService;
+
 
     @BeforeEach
     void setUp() {
@@ -63,5 +69,19 @@ public class AccountServiceTest {
             accountService.reduceSizeStorage("test", 1000);
         });
     }
+
+    @Test
+    void shouldAddSizeStorageSuccessfully() {
+        ObjectDetails objectDetails = new ObjectDetails();
+        objectDetails.setObjectSize(10000);
+
+        when(objectRepository.findObjectDetailsByType("nameTest", TypeObject.File, "/test1/", "test1"))
+                .thenReturn(objectDetails);
+
+        accountService.addSizeStorage("nameTest","test1", "/test1/");
+
+        verify(accountRepository).updateSizeStorageByLogin("test1", 10000);
+    }
+
 }
 
