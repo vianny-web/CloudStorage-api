@@ -36,7 +36,7 @@ public class AccountController {
             throw e;
         }
         catch (Exception e) {
-            throw new ServerErrorRequiredException("Internal server error");
+            throw new ServerErrorRequiredException(e.getMessage());
         }
     }
 }

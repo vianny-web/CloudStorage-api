@@ -3,6 +3,8 @@ package com.vianny.cloudstorageapi.controllers;
 import com.vianny.cloudstorageapi.config.MinioConfig;
 import com.vianny.cloudstorageapi.dto.request.RequestFolder;
 import com.vianny.cloudstorageapi.dto.response.ResponseMessage;
+import com.vianny.cloudstorageapi.exception.requiredException.ConflictRequiredException;
+import com.vianny.cloudstorageapi.exception.requiredException.NotFoundRequiredException;
 import com.vianny.cloudstorageapi.exception.requiredException.ServerErrorRequiredException;
 import com.vianny.cloudstorageapi.services.AccountService;
 import com.vianny.cloudstorageapi.services.FileService;
@@ -28,6 +30,9 @@ public class FolderController {
         try {
             folderService.saveFolder(requestFolder.getFolderName(), requestFolder.getPath(), principal.getName());
         }
+        catch (ConflictRequiredException e) {
+            throw e;
+        }
         catch (Exception e) {
             throw new ServerErrorRequiredException(e.getMessage());
         }
@@ -40,6 +45,9 @@ public class FolderController {
     public ResponseEntity<ResponseMessage> deleteFolder(@RequestParam("path") String path, @RequestParam("folderName") String folderName, Principal principal) {
         try {
             folderService.deleteFolder(folderName, path, principal.getName());
+        }
+        catch (NotFoundRequiredException e) {
+            throw e;
         }
         catch (Exception e) {
             throw new ServerErrorRequiredException(e.getMessage());

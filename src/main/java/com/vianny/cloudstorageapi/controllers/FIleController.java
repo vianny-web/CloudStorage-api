@@ -6,9 +6,7 @@ import com.vianny.cloudstorageapi.dto.ObjectsInfoDTO;
 import com.vianny.cloudstorageapi.dto.response.ResponseAllObjects;
 import com.vianny.cloudstorageapi.dto.response.ResponseMessage;
 import com.vianny.cloudstorageapi.dto.response.ResponseObjectDetails;
-import com.vianny.cloudstorageapi.exception.requiredException.NoContentRequiredException;
-import com.vianny.cloudstorageapi.exception.requiredException.NotFoundRequiredException;
-import com.vianny.cloudstorageapi.exception.requiredException.ServerErrorRequiredException;
+import com.vianny.cloudstorageapi.exception.requiredException.*;
 import com.vianny.cloudstorageapi.services.AccountService;
 import com.vianny.cloudstorageapi.services.FileService;
 import io.minio.GetObjectArgs;
@@ -71,6 +69,9 @@ public class FIleController {
             accountService.reduceSizeStorage(principal.getName(), (int) file.getSize());
             fileService.saveFile(file, fullDirectory, principal.getName());
         }
+        catch (NoStorageSpaceRequiredException | ConflictRequiredException e) {
+            throw e;
+        }
         catch (Exception e) {
             throw new ServerErrorRequiredException(e.getMessage());
         }
@@ -100,7 +101,7 @@ public class FIleController {
         } catch (IOException | ErrorResponseException | InsufficientDataException | InternalException |
                  InvalidKeyException | InvalidResponseException | NoSuchAlgorithmException | ServerException |
                  XmlParserException e) {
-            throw new NotFoundRequiredException(e.getMessage());
+            throw new ServerErrorRequiredException(e.getMessage());
         }
     }
 
@@ -111,7 +112,11 @@ public class FIleController {
             ResponseObjectDetails<List<ObjectDetailsDTO>> dataObject = new ResponseObjectDetails<>(HttpStatus.FOUND, objectDetails);
             return new ResponseEntity<>(dataObject, HttpStatus.OK);
 
-        } catch (Exception e) {
+        }
+        catch (NotFoundRequiredException e) {
+            throw e;
+        }
+        catch (Exception e) {
             throw new ServerErrorRequiredException(e.getMessage());
         }
     }
@@ -140,6 +145,9 @@ public class FIleController {
 
             accountService.addSizeStorage(filename, principal.getName(), path);
             fileService.deleteFile(filename, path, principal.getName());
+        }
+        catch (NotFoundRequiredException e) {
+            throw e;
         }
         catch (RuntimeException | ServerException | InsufficientDataException | ErrorResponseException | IOException |
                NoSuchAlgorithmException | InvalidKeyException | InvalidResponseException | XmlParserException |
