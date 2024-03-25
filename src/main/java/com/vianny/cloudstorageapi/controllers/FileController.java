@@ -94,7 +94,9 @@ public class FileController {
     @GetMapping("/propertiesFile")
     public ResponseEntity<ResponseObjectDetails<List<ObjectDetailsDTO>>> getPropertiesFile(@RequestParam("path") String path, @RequestParam("filename") String filename, Principal principal) {
         try {
-            List<ObjectDetailsDTO> objectDetails = fileService.getObject(filename, path, principal.getName());
+            String fullDirectory = principal.getName() + "/" + path;
+
+            List<ObjectDetailsDTO> objectDetails = fileService.getObject(filename, fullDirectory, principal.getName());
             ResponseObjectDetails<List<ObjectDetailsDTO>> dataObject = new ResponseObjectDetails<>(HttpStatus.FOUND, objectDetails);
             return new ResponseEntity<>(dataObject, HttpStatus.OK);
 
@@ -110,7 +112,9 @@ public class FileController {
     @GetMapping("/")
     public ResponseEntity<ResponseAllObjects<List<ObjectsInfoDTO>>> getFiles(@RequestParam("path") String path, Principal principal) {
         try {
-            List<ObjectsInfoDTO> objects = fileService.getObjectsName(path, principal.getName());
+            String fullDirectory = principal.getName() + "/" + path;
+
+            List<ObjectsInfoDTO> objects = fileService.getObjectsName(fullDirectory, principal.getName());
             ResponseAllObjects<List<ObjectsInfoDTO>> responseAllObjects = new ResponseAllObjects<>(HttpStatus.FOUND, objects);
 
             return new ResponseEntity<>(responseAllObjects,HttpStatus.OK);

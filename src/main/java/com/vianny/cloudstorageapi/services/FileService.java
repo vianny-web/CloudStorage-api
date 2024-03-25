@@ -51,16 +51,16 @@ public class FileService {
     }
 
     @Transactional
-    public List<ObjectDetailsDTO> getObject(String filename, String path, String login) {
-        if (objectRepository.findObjectDetailsByType(filename, TypeObject.File, path, login) == null) {
+    public List<ObjectDetailsDTO> getObject(String filename, String fullDirectory, String login) {
+        if (objectRepository.findObjectDetailsByType(filename, TypeObject.File, fullDirectory, login) == null) {
             throw new NotFoundRequiredException("File with this name is not found");
         }
-        return objectRepository.getObjectDetailsByObjectLocation(filename, TypeObject.File, path, login);
+        return objectRepository.getObjectDetailsByObjectLocation(filename, TypeObject.File, fullDirectory, login);
     }
 
     @Transactional
-    public List<ObjectsInfoDTO> getObjectsName(String path, String login) {
-        return objectRepository.getObjectsNameByObjectLocation(path,login);
+    public List<ObjectsInfoDTO> getObjectsName(String fullDirectory, String login) {
+        return objectRepository.getObjectsNameByObjectLocation(fullDirectory, login);
     }
 
     @Transactional
