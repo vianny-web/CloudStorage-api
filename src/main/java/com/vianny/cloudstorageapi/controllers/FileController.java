@@ -10,7 +10,6 @@ import com.vianny.cloudstorageapi.exception.requiredException.*;
 import com.vianny.cloudstorageapi.services.AccountService;
 import com.vianny.cloudstorageapi.services.FileService;
 import com.vianny.cloudstorageapi.services.FileTransferService;
-import io.minio.GetObjectArgs;
 import io.minio.RemoveObjectArgs;
 import io.minio.errors.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
@@ -33,7 +31,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/myCloud")
-public class FIleController {
+public class FileController {
     private MinioConfig minioConfig;
     private FileService fileService;
     private FileTransferService fileTransferService;
