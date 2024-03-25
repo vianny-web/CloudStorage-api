@@ -38,12 +38,18 @@ public class FileTransferService {
     }
 
     public InputStreamResource downloadFile(String login, String path) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
-        InputStream fileStream = minioConfig.minioClient().getObject(
-                GetObjectArgs.builder()
-                        .bucket(login)
-                        .object( login + "/" + path)
-                        .build()
-        );
+        InputStream fileStream;
+        try {
+            fileStream = minioConfig.minioClient().getObject(
+                    GetObjectArgs.builder()
+                            .bucket(login)
+                            .object(login + "/" + path)
+                            .build()
+            );
+        } catch (ErrorResponseException e) {
+            throw new NotFoundRequiredException("The file was not found");
+        }
+
         return new InputStreamResource(fileStream);
     }
 }

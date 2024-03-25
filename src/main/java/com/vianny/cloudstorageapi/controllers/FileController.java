@@ -15,10 +15,7 @@ import io.minio.errors.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -78,11 +75,10 @@ public class FileController {
     public ResponseEntity<Resource> downloadFileFromTheServer(@RequestParam String path, Principal principal) {
         try {
             InputStreamResource resource = fileTransferService.downloadFile(principal.getName(), path);
-            System.out.println(resource.isFile());
 
             HttpHeaders downloadHeaders = new HttpHeaders();
             downloadHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            downloadHeaders.setContentDispositionFormData("attachment", path);
+            downloadHeaders.setContentDisposition(ContentDisposition.builder("attachment").filename(path).build());
 
             return ResponseEntity.ok()
                     .headers(downloadHeaders)
