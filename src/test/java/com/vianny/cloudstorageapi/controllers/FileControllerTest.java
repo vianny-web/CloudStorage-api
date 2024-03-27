@@ -12,6 +12,7 @@ import com.vianny.cloudstorageapi.exception.requiredException.NotFoundRequiredEx
 import com.vianny.cloudstorageapi.services.AccountService;
 import com.vianny.cloudstorageapi.services.FileService;
 import com.vianny.cloudstorageapi.services.FileTransferService;
+import com.vianny.cloudstorageapi.services.MinioService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +32,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -40,6 +42,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 public class FileControllerTest {
+    @Mock
+    private MinioService minioService;
     @Mock
     private FileService fileService;
     @Mock
@@ -213,5 +217,31 @@ public class FileControllerTest {
                 .andExpect(jsonPath("$.objects[1].objectType").value(TypeObject.Folder.toString()));
 
         verify(fileService, times(1)).getObjectsName(eq(full_directory), eq(principal.getName()));
+    }
+
+
+    // Тестирование всех случаев метода "deleteFile"
+    @Test
+    void testDeleteFile() throws Exception {
+        mockMvc.perform(delete("/myCloud/")
+                        .principal(principal)
+                        .param("path", path)
+                        .param("filename", filename))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.httpStatus", is("OK")));
+
+        verify(minioService, times(1)).removeObject(filename, path, principal.getName());
+        verify(accountService, times(1)).addSizeStorage(filename, principal.getName(), path);
+        verify(fileService, times(1)).deleteFile(filename, path, principal.getName());
+    }
+    @Test
+    void testDeleteFile_NotFoundRequiredException() throws Exception {
+        doThrow(NotFoundRequiredException.class).when(fileService).deleteFile(filename, path, principal.getName());
+
+        mockMvc.perform(delete("/myCloud/")
+                        .principal(principal)
+                        .param("path", path)
+                        .param("filename", filename))
+                .andExpect(status().isNotFound());
     }
 }
