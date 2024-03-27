@@ -4,6 +4,7 @@ import com.vianny.cloudstorageapi.dto.request.jwt.RequestJWT;
 import com.vianny.cloudstorageapi.dto.response.ResponseMessage;
 import com.vianny.cloudstorageapi.dto.authentication.SignInRequest;
 import com.vianny.cloudstorageapi.dto.authentication.SignUpRequest;
+import com.vianny.cloudstorageapi.exception.requiredException.ServerErrorRequiredException;
 import com.vianny.cloudstorageapi.exception.requiredException.UnauthorizedRequiredException;
 import com.vianny.cloudstorageapi.exception.requiredException.UnregisteredRequiredException;
 import com.vianny.cloudstorageapi.models.Account;
@@ -80,7 +81,7 @@ public class SecurityController {
             catch (ServerException | InsufficientDataException | ErrorResponseException | IOException |
                      NoSuchAlgorithmException | InvalidKeyException | InvalidResponseException | XmlParserException |
                      InternalException e) {
-                // TODO
+                throw new ServerErrorRequiredException(e.getMessage());
             }
         }
         catch (BadCredentialsException e) {
