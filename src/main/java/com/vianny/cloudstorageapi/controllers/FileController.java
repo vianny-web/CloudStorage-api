@@ -10,6 +10,7 @@ import com.vianny.cloudstorageapi.exception.requiredException.*;
 import com.vianny.cloudstorageapi.services.AccountService;
 import com.vianny.cloudstorageapi.services.FileService;
 import com.vianny.cloudstorageapi.services.FileTransferService;
+import com.vianny.cloudstorageapi.services.MinioService;
 import io.minio.RemoveObjectArgs;
 import io.minio.errors.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +30,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/myCloud")
 public class FileController {
-    private MinioConfig minioConfig;
+    private MinioService minioService;
     private FileService fileService;
     private FileTransferService fileTransferService;
     private AccountService accountService;
+
     @Autowired
-    public void setMinioConfig(MinioConfig minioConfig) {
-        this.minioConfig = minioConfig;
+    public void setMinioService(MinioService minioService) {
+        this.minioService = minioService;
     }
     @Autowired
     public void setFileService(FileService fileService) {
@@ -127,21 +129,14 @@ public class FileController {
     @Transactional
     public ResponseEntity<ResponseMessage> deleteFile(@RequestParam("path") String path, @RequestParam("filename") String filename, Principal principal) {
         try {
-            RemoveObjectArgs removeObjectArgs = RemoveObjectArgs.builder()
-                    .bucket(principal.getName())
-                    .object(path)
-                    .build();
-            minioConfig.minioClient().removeObject(removeObjectArgs);
-
+            minioService.removeObject(filename, path, principal.getName());
             accountService.addSizeStorage(filename, principal.getName(), path);
             fileService.deleteFile(filename, path, principal.getName());
         }
         catch (NotFoundRequiredException e) {
             throw e;
         }
-        catch (RuntimeException | ServerException | InsufficientDataException | ErrorResponseException | IOException |
-               NoSuchAlgorithmException | InvalidKeyException | InvalidResponseException | XmlParserException |
-               InternalException e) {
+        catch (Exception e) {
             throw new ServerErrorRequiredException(e.getMessage());
         }
 
