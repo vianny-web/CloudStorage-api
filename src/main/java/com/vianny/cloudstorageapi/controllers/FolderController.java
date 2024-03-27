@@ -53,7 +53,7 @@ public class FolderController {
             throw new ServerErrorRequiredException(e.getMessage());
         }
 
-        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.CREATED, "Folder successfully delete");
-        return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
+        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK, "Folder successfully delete");
+        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
     }
 }
