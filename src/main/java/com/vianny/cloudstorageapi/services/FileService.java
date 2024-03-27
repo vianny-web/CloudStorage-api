@@ -32,18 +32,18 @@ public class FileService {
     }
 
     @Transactional
-    public void saveFile(MultipartFile file, String path, String login) {
+    public void saveFile(MultipartFile file, String fullDirectory, String login) {
         ObjectDetails objectDetails = new ObjectDetails();
         Optional<Account> currentAccount = accountRepository.findUserByLogin(login);
 
-        if (objectRepository.findByObjectNameAndObjectTypeAndObjectLocationAndAccount_Login(file.getOriginalFilename(), TypeObject.File, path,login) != null) {
+        if (objectRepository.findByObjectNameAndObjectTypeAndObjectLocationAndAccount_Login(file.getOriginalFilename(), TypeObject.File, fullDirectory, login) != null) {
             throw new ConflictRequiredException("A file with this name already exists in this directory");
         }
 
         objectDetails.setObjectName(file.getOriginalFilename());
         objectDetails.setObjectType(TypeObject.File);
         objectDetails.setObjectSize((int) file.getSize());
-        objectDetails.setObjectLocation(path);
+        objectDetails.setObjectLocation(fullDirectory);
         objectDetails.setUploadDate(LocalDateTime.now());
         objectDetails.setAccount(currentAccount.orElseThrow());
 

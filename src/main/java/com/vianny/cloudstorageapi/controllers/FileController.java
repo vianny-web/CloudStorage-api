@@ -52,11 +52,13 @@ public class FileController {
         this.accountService = accountService;
     }
 
+    String fullDirectory;
+
     @PostMapping("/upload")
     @Transactional
     public ResponseEntity<ResponseMessage> uploadFileToTheServer(@RequestParam MultipartFile file, @RequestParam String path, Principal principal) {
         try {
-            String fullDirectory = principal.getName() + "/" + path;
+            fullDirectory = principal.getName() + "/" + path;
 
             fileTransferService.uploadFile(file, fullDirectory, principal.getName());
             accountService.reduceSizeStorage(principal.getName(), (int) file.getSize());
@@ -96,7 +98,7 @@ public class FileController {
     @GetMapping("/propertiesFile")
     public ResponseEntity<ResponseObjectDetails<List<ObjectDetailsDTO>>> getPropertiesFile(@RequestParam("path") String path, @RequestParam("filename") String filename, Principal principal) {
         try {
-            String fullDirectory = principal.getName() + "/" + path;
+            fullDirectory = principal.getName() + "/" + path;
 
             List<ObjectDetailsDTO> objectDetails = fileService.getObject(filename, fullDirectory, principal.getName());
             ResponseObjectDetails<List<ObjectDetailsDTO>> dataObject = new ResponseObjectDetails<>(HttpStatus.FOUND, objectDetails);
@@ -114,7 +116,7 @@ public class FileController {
     @GetMapping("/")
     public ResponseEntity<ResponseAllObjects<List<ObjectsInfoDTO>>> getFiles(@RequestParam("path") String path, Principal principal) {
         try {
-            String fullDirectory = principal.getName() + "/" + path;
+            fullDirectory = principal.getName() + "/" + path;
 
             List<ObjectsInfoDTO> objects = fileService.getObjectsName(fullDirectory, principal.getName());
             ResponseAllObjects<List<ObjectsInfoDTO>> responseAllObjects = new ResponseAllObjects<>(HttpStatus.FOUND, objects);
@@ -129,9 +131,11 @@ public class FileController {
     @Transactional
     public ResponseEntity<ResponseMessage> deleteFile(@RequestParam("path") String path, @RequestParam("filename") String filename, Principal principal) {
         try {
-            minioService.removeObject(filename, path, principal.getName());
+            fullDirectory = principal.getName() + "/" + path;
+
+            minioService.removeObject(fullDirectory, principal.getName());
             accountService.addSizeStorage(filename, principal.getName(), path);
-            fileService.deleteFile(filename, path, principal.getName());
+            fileService.deleteFile(filename, fullDirectory, principal.getName());
         }
         catch (NotFoundRequiredException e) {
             throw e;

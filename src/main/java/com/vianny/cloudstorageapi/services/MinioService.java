@@ -33,10 +33,10 @@ public class MinioService {
         );
     }
 
-    public void removeObject(String filename, String path, String login) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+    public void removeObject(String fullDirectory, String login) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         RemoveObjectArgs removeObjectArgs = RemoveObjectArgs.builder()
                 .bucket(login)
-                .object(path + filename)
+                .object(fullDirectory)
                 .build();
 
         minioConfig.minioClient().removeObject(removeObjectArgs);

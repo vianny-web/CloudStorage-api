@@ -28,8 +28,8 @@ public class FolderService {
     }
 
     @Transactional
-    public void saveFolder(String folderName, String path, String login) {
-        if (objectRepository.findByObjectNameAndObjectTypeAndObjectLocationAndAccount_Login(folderName, TypeObject.Folder,login  + "/" + path, login) != null) {
+    public void saveFolder(String folderName, String fullDirectory, String login) {
+        if (objectRepository.findByObjectNameAndObjectTypeAndObjectLocationAndAccount_Login(folderName, TypeObject.Folder, fullDirectory, login) != null) {
             throw new ConflictRequiredException("A folder with this name already exists in this directory");
         }
 
@@ -39,7 +39,7 @@ public class FolderService {
         objectDetails.setObjectName(folderName);
         objectDetails.setObjectType(TypeObject.Folder);
         objectDetails.setObjectSize(0);
-        objectDetails.setObjectLocation(login + "/" + path);
+        objectDetails.setObjectLocation(fullDirectory);
         objectDetails.setUploadDate(LocalDateTime.now());
         objectDetails.setAccount(currentAccount.orElseThrow());
 
@@ -47,10 +47,10 @@ public class FolderService {
     }
 
     @Transactional
-    public void deleteFolder(String filename, String path, String login) {
-        if (objectRepository.findByObjectNameAndObjectTypeAndObjectLocationAndAccount_Login(filename, TypeObject.Folder, path, login) == null) {
+    public void deleteFolder(String filename, String fullDirectory, String login) {
+        if (objectRepository.findByObjectNameAndObjectTypeAndObjectLocationAndAccount_Login(filename, TypeObject.Folder, fullDirectory, login) == null) {
             throw new NotFoundRequiredException("Folder with this name is not found");
         }
-        objectRepository.deleteByObjectLocation(filename, TypeObject.Folder, path, login);
+        objectRepository.deleteByObjectLocation(filename, TypeObject.Folder, fullDirectory, login);
     }
 }

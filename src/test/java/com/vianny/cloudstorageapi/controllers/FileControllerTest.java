@@ -75,7 +75,7 @@ public class FileControllerTest {
         principal = () -> "user";
 
         filename = "file.txt";
-        foldername = "file2.txt";
+        foldername = "photos";
         full_directory = "user/files/";
         size = 1000;
         time = LocalDateTime.now();
@@ -230,7 +230,7 @@ public class FileControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.httpStatus", is("OK")));
 
-        verify(minioService, times(1)).removeObject(filename, path, principal.getName());
+        verify(minioService, times(1)).removeObject(full_directory, principal.getName());
         verify(accountService, times(1)).addSizeStorage(filename, principal.getName(), path);
         verify(fileService, times(1)).deleteFile(filename, path, principal.getName());
     }

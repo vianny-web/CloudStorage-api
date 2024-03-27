@@ -25,10 +25,13 @@ public class FolderController {
         this.folderService = folderService;
     }
 
+    private String fullDirectory;
+
     @PostMapping("/createFolder")
     public ResponseEntity<ResponseMessage> createFolder(@RequestBody RequestFolder requestFolder, Principal principal) {
         try {
-            folderService.saveFolder(requestFolder.getFolderName(), requestFolder.getPath(), principal.getName());
+            fullDirectory = principal.getName() + "/" + requestFolder.getPath();
+            folderService.saveFolder(requestFolder.getFolderName(), fullDirectory, principal.getName());
         }
         catch (ConflictRequiredException e) {
             throw e;
@@ -44,7 +47,8 @@ public class FolderController {
     @DeleteMapping("/deleteFolder/")
     public ResponseEntity<ResponseMessage> deleteFolder(@RequestParam("path") String path, @RequestParam("folderName") String folderName, Principal principal) {
         try {
-            folderService.deleteFolder(folderName, path, principal.getName());
+            fullDirectory = principal.getName() + "/" + path;
+            folderService.deleteFolder(folderName, fullDirectory, principal.getName());
         }
         catch (NotFoundRequiredException e) {
             throw e;

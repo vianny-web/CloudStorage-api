@@ -2,10 +2,9 @@ package com.vianny.cloudstorageapi.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vianny.cloudstorageapi.dto.request.RequestFolder;
-import com.vianny.cloudstorageapi.enums.TypeObject;
 import com.vianny.cloudstorageapi.exception.handlers.CustomExceptionHandler;
 import com.vianny.cloudstorageapi.exception.requiredException.ConflictRequiredException;
-import com.vianny.cloudstorageapi.exception.requiredException.NoStorageSpaceRequiredException;
+import com.vianny.cloudstorageapi.exception.requiredException.NotFoundRequiredException;
 import com.vianny.cloudstorageapi.services.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.security.Principal;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -45,11 +43,11 @@ public class FolderControllerTest {
                 .build();
         objectMapper = new ObjectMapper();
 
-        path = "";
+        path = "photos/";
         principal = () -> "user";
 
         foldername = "files";
-        full_directory = "user/";
+        full_directory = "user/photos/";
 
     }
 
@@ -65,7 +63,7 @@ public class FolderControllerTest {
                         .principal(principal))
                 .andExpect(status().isCreated());
 
-        verify(folderService, times(1)).saveFolder(foldername, path, principal.getName());
+        verify(folderService, times(1)).saveFolder(foldername, full_directory, principal.getName());
     }
 
     @Test
@@ -73,7 +71,7 @@ public class FolderControllerTest {
         RequestFolder requestFolder = new RequestFolder(foldername, path);
         String folderJson = objectMapper.writeValueAsString(requestFolder);
 
-        doThrow(ConflictRequiredException.class).when(folderService).saveFolder(foldername, path, principal.getName());
+        doThrow(ConflictRequiredException.class).when(folderService).saveFolder(foldername, full_directory, principal.getName());
 
         mockMvc.perform(post("/myCloud/createFolder")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -86,13 +84,23 @@ public class FolderControllerTest {
     // Тестирование всех случаев метода "deleteFolder"
     @Test
     void testDeleteFolder() throws Exception {
-        mockMvc.perform(delete("/myCloud/deleteFolder")
+        mockMvc.perform(delete("/myCloud/deleteFolder/")
+                        .principal(principal)
                         .param("path", path)
-                        .param("folderName", foldername)
-                        .principal(principal))
+                        .param("folderName", foldername))
                 .andExpect(status().isOk());
 
-        verify(folderService, times(1)).saveFolder(foldername, path, principal.getName());
+        verify(folderService, times(1)).deleteFolder(foldername, full_directory, principal.getName());
+    }
+    @Test
+    void testDeleteFolder_NotFoundRequiredException() throws Exception {
+        doThrow(NotFoundRequiredException.class).when(folderService).deleteFolder(foldername, full_directory, principal.getName());
+
+        mockMvc.perform(delete("/myCloud/deleteFolder/")
+                        .principal(principal)
+                        .param("path", path)
+                        .param("folderName", foldername))
+                .andExpect(status().isNotFound());
     }
 
 }
