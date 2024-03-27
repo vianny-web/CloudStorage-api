@@ -1,6 +1,8 @@
 package com.vianny.cloudstorageapi.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vianny.cloudstorageapi.dto.ObjectDetailsDTO;
+import com.vianny.cloudstorageapi.enums.TypeObject;
 import com.vianny.cloudstorageapi.exception.handlers.CustomExceptionHandler;
 import com.vianny.cloudstorageapi.exception.requiredException.ConflictRequiredException;
 import com.vianny.cloudstorageapi.exception.requiredException.NoContentRequiredException;
@@ -16,20 +18,21 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.core.io.InputStreamResource;
 
 import java.io.ByteArrayInputStream;
 import java.security.Principal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -50,7 +53,9 @@ public class FileControllerTest {
     private ObjectMapper objectMapper;
 
     MockMultipartFile file;
-    String path;
+    String path, filename, full_directory;
+    int size;
+    LocalDateTime time;
     Principal principal;
 
     @BeforeEach
@@ -60,10 +65,14 @@ public class FileControllerTest {
                 .build();
         objectMapper = new ObjectMapper();
 
-
         file = new MockMultipartFile("file", "file1.txt", MediaType.TEXT_PLAIN_VALUE, "test file".getBytes());
         path = "files/";
         principal = () -> "user";
+
+        filename = "file.txt";
+        full_directory = "user/files/";
+        size = 1000;
+        time = LocalDateTime.now();
     }
 
     // Тестирование всех случаев метода "uploadFileToTheServer"
@@ -148,7 +157,33 @@ public class FileControllerTest {
 
     // Тестирование всех случаев метода "getPropertiesFile"
     @Test
-    void testGetPropertiesFile() {
+    void testGetPropertiesFile() throws Exception {
+        List<ObjectDetailsDTO> objectDetailsList = new ArrayList<>();
+        ObjectDetailsDTO objectDetails = new ObjectDetailsDTO(filename, TypeObject.File, full_directory, size, time);
+        objectDetailsList.add(objectDetails);
 
+        when(fileService.getObject(eq(filename), eq(full_directory), eq(principal.getName()))).thenReturn(objectDetailsList);
+
+        mockMvc.perform(get("/myCloud/propertiesFile")
+                        .param("path", path)
+                        .param("filename", filename)
+                        .principal(principal))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.httpStatus").value("FOUND"))
+                .andExpect(jsonPath("$.properties[0].objectName").value(filename))
+                .andExpect(jsonPath("$.properties[0].objectType").value(TypeObject.File.toString()))
+                .andExpect(jsonPath("$.properties[0].objectLocation").value(full_directory));
+
+        verify(fileService, times(1)).getObject(eq(filename), eq(full_directory), eq(principal.getName()));
+    }
+    @Test
+    void testGetPropertiesFile_NotFoundRequiredException() throws Exception {
+        doThrow(NotFoundRequiredException.class).when(fileService).getObject(filename, full_directory, principal.getName());
+
+        mockMvc.perform(get("/myCloud/propertiesFile")
+                        .param("path", path)
+                        .param("filename", filename)
+                        .principal(() -> principal.getName()))
+                .andExpect(status().isNotFound());
     }
 }
