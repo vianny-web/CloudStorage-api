@@ -172,7 +172,8 @@ public class FileControllerTest {
                 .andExpect(jsonPath("$.httpStatus").value("FOUND"))
                 .andExpect(jsonPath("$.properties[0].objectName").value(filename))
                 .andExpect(jsonPath("$.properties[0].objectType").value(TypeObject.File.toString()))
-                .andExpect(jsonPath("$.properties[0].objectLocation").value(full_directory));
+                .andExpect(jsonPath("$.properties[0].objectLocation").value(full_directory))
+                .andExpect(jsonPath("$.properties[0].objectSize").value(size));
 
         verify(fileService, times(1)).getObject(eq(filename), eq(full_directory), eq(principal.getName()));
     }
