@@ -2,6 +2,7 @@ package com.vianny.cloudstorageapi.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vianny.cloudstorageapi.dto.ObjectDetailsDTO;
+import com.vianny.cloudstorageapi.dto.ObjectsInfoDTO;
 import com.vianny.cloudstorageapi.enums.TypeObject;
 import com.vianny.cloudstorageapi.exception.handlers.CustomExceptionHandler;
 import com.vianny.cloudstorageapi.exception.requiredException.ConflictRequiredException;
@@ -53,7 +54,7 @@ public class FileControllerTest {
     private ObjectMapper objectMapper;
 
     MockMultipartFile file;
-    String path, filename, full_directory;
+    String path, filename, foldername, full_directory;
     int size;
     LocalDateTime time;
     Principal principal;
@@ -70,6 +71,7 @@ public class FileControllerTest {
         principal = () -> "user";
 
         filename = "file.txt";
+        foldername = "file2.txt";
         full_directory = "user/files/";
         size = 1000;
         time = LocalDateTime.now();
@@ -186,5 +188,30 @@ public class FileControllerTest {
                         .param("filename", filename)
                         .principal(() -> principal.getName()))
                 .andExpect(status().isNotFound());
+    }
+
+
+    // Тестирование всех случаев метода "getFiles"
+    @Test
+    void testGetFiles() throws Exception {
+        List<ObjectsInfoDTO> objectsInfoDTOS = new ArrayList<>();
+        ObjectsInfoDTO objectInfo1 = new ObjectsInfoDTO(filename, TypeObject.File);
+        ObjectsInfoDTO objectInfo2 = new ObjectsInfoDTO(foldername, TypeObject.Folder);
+        objectsInfoDTOS.add(objectInfo1);
+        objectsInfoDTOS.add(objectInfo2);
+
+        when(fileService.getObjectsName(eq(full_directory), eq(principal.getName()))).thenReturn(objectsInfoDTOS);
+
+        mockMvc.perform(get("/myCloud/")
+                        .param("path", path)
+                        .principal(principal))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.httpStatus").value("FOUND"))
+                .andExpect(jsonPath("$.objects[0].objectName").value(filename))
+                .andExpect(jsonPath("$.objects[0].objectType").value(TypeObject.File.toString()))
+                .andExpect(jsonPath("$.objects[1].objectName").value(foldername))
+                .andExpect(jsonPath("$.objects[1].objectType").value(TypeObject.Folder.toString()));
+
+        verify(fileService, times(1)).getObjectsName(eq(full_directory), eq(principal.getName()));
     }
 }
