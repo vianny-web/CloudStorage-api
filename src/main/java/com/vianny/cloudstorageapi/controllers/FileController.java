@@ -104,7 +104,7 @@ public class FileController {
 
             List<ObjectDetailsDTO> objectDetails = objectService.getObject(filename, fullDirectory, principal.getName());
             ResponseObjectDetails<List<ObjectDetailsDTO>> dataObject = new ResponseObjectDetails<>(HttpStatus.FOUND, objectDetails);
-            return new ResponseEntity<>(dataObject, HttpStatus.OK);
+            return new ResponseEntity<>(dataObject, HttpStatus.FOUND);
 
         }
         catch (NotFoundRequiredException e) {
@@ -123,7 +123,7 @@ public class FileController {
             List<ObjectsInfoDTO> objects = objectService.getObjectsName(fullDirectory, principal.getName());
             ResponseAllObjects<List<ObjectsInfoDTO>> responseAllObjects = new ResponseAllObjects<>(HttpStatus.FOUND, objects);
 
-            return new ResponseEntity<>(responseAllObjects,HttpStatus.OK);
+            return new ResponseEntity<>(responseAllObjects,HttpStatus.FOUND);
         } catch (Exception e) {
             throw new ServerErrorRequiredException(e.getMessage());
         }
@@ -135,7 +135,7 @@ public class FileController {
             List<ObjectDetailsDTO> objects = objectService.getObjectsByName_search(objectName, principal.getName());
             ResponseAllObjects<List<ObjectDetailsDTO>> responseAllObjects = new ResponseAllObjects<>(HttpStatus.FOUND, objects);
 
-            return new ResponseEntity<>(responseAllObjects,HttpStatus.OK);
+            return new ResponseEntity<>(responseAllObjects,HttpStatus.FOUND);
         } catch (Exception e) {
             throw new ServerErrorRequiredException(e.getMessage());
         }
