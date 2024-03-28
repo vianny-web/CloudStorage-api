@@ -12,6 +12,7 @@ import com.vianny.cloudstorageapi.repositories.AccountRepository;
 import com.vianny.cloudstorageapi.services.MinioService;
 import com.vianny.cloudstorageapi.utils.JwtCore;
 import io.minio.errors.*;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +63,7 @@ public class SecurityController {
     }
 
     @PostMapping("/signUp")
-    ResponseEntity<?> singUp(@RequestBody SignUpRequest signUpRequest) {
+    ResponseEntity<?> singUp(@Valid @RequestBody SignUpRequest signUpRequest) {
         try {
             if (accountRepository.existsUserByLogin(signUpRequest.getLogin())) {
                 throw new UnregisteredRequiredException(HttpStatus.BAD_REQUEST, "Choose a different login");
@@ -93,7 +94,7 @@ public class SecurityController {
     }
 
     @PostMapping("/signIn")
-    ResponseEntity<?> singIn(@RequestBody SignInRequest singInRequest) {
+    ResponseEntity<?> singIn(@Valid @RequestBody SignInRequest singInRequest) {
         Authentication authentication;
         try {
             authentication = authenticationManager

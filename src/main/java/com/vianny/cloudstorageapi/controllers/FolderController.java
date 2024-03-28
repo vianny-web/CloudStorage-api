@@ -9,6 +9,7 @@ import com.vianny.cloudstorageapi.exception.requiredException.ServerErrorRequire
 import com.vianny.cloudstorageapi.services.AccountService;
 import com.vianny.cloudstorageapi.services.FileService;
 import com.vianny.cloudstorageapi.services.FolderService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class FolderController {
     private String fullDirectory;
 
     @PostMapping("/createFolder")
-    public ResponseEntity<ResponseMessage> createFolder(@RequestBody RequestFolder requestFolder, Principal principal) {
+    public ResponseEntity<ResponseMessage> createFolder(@Valid @RequestBody RequestFolder requestFolder, Principal principal) {
         try {
             fullDirectory = principal.getName() + "/" + requestFolder.getPath();
             folderService.saveFolder(requestFolder.getFolderName(), fullDirectory, principal.getName());
