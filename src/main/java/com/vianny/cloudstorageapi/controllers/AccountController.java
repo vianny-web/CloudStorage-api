@@ -2,7 +2,6 @@ package com.vianny.cloudstorageapi.controllers;
 
 import com.vianny.cloudstorageapi.dto.AccountDTO;
 import com.vianny.cloudstorageapi.dto.response.ResponseAccountDetails;
-import com.vianny.cloudstorageapi.exception.requiredException.NoContentRequiredException;
 import com.vianny.cloudstorageapi.exception.requiredException.NoStorageSpaceRequiredException;
 import com.vianny.cloudstorageapi.exception.requiredException.ServerErrorRequiredException;
 import com.vianny.cloudstorageapi.services.AccountService;

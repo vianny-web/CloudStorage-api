@@ -1,6 +1,5 @@
 package com.vianny.cloudstorageapi.controllers;
 
-import com.vianny.cloudstorageapi.config.MinioConfig;
 import com.vianny.cloudstorageapi.dto.ObjectDetailsDTO;
 import com.vianny.cloudstorageapi.dto.ObjectsInfoDTO;
 import com.vianny.cloudstorageapi.dto.response.ResponseAllObjects;
@@ -11,7 +10,6 @@ import com.vianny.cloudstorageapi.services.AccountService;
 import com.vianny.cloudstorageapi.services.FileService;
 import com.vianny.cloudstorageapi.services.FileTransferService;
 import com.vianny.cloudstorageapi.services.MinioService;
-import io.minio.RemoveObjectArgs;
 import io.minio.errors.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
