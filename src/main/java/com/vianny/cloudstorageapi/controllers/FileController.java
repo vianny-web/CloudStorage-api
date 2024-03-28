@@ -6,10 +6,7 @@ import com.vianny.cloudstorageapi.dto.response.ResponseAllObjects;
 import com.vianny.cloudstorageapi.dto.response.ResponseMessage;
 import com.vianny.cloudstorageapi.dto.response.ResponseObjectDetails;
 import com.vianny.cloudstorageapi.exception.requiredException.*;
-import com.vianny.cloudstorageapi.services.AccountService;
-import com.vianny.cloudstorageapi.services.FileService;
-import com.vianny.cloudstorageapi.services.FileTransferService;
-import com.vianny.cloudstorageapi.services.MinioService;
+import com.vianny.cloudstorageapi.services.*;
 import io.minio.errors.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -30,6 +27,7 @@ import java.util.List;
 public class FileController {
     private MinioService minioService;
     private FileService fileService;
+    private ObjectService objectService;
     private FileTransferService fileTransferService;
     private AccountService accountService;
 
@@ -41,6 +39,11 @@ public class FileController {
     public void setFileService(FileService fileService) {
         this.fileService = fileService;
     }
+    @Autowired
+    public void setObjectService(ObjectService objectService) {
+        this.objectService = objectService;
+    }
+
     @Autowired
     public void setFileTransferService(FileTransferService fileTransferService) {
         this.fileTransferService = fileTransferService;
@@ -98,7 +101,7 @@ public class FileController {
         try {
             fullDirectory = principal.getName() + "/" + path;
 
-            List<ObjectDetailsDTO> objectDetails = fileService.getObject(filename, fullDirectory, principal.getName());
+            List<ObjectDetailsDTO> objectDetails = objectService.getObject(filename, fullDirectory, principal.getName());
             ResponseObjectDetails<List<ObjectDetailsDTO>> dataObject = new ResponseObjectDetails<>(HttpStatus.FOUND, objectDetails);
             return new ResponseEntity<>(dataObject, HttpStatus.OK);
 
@@ -116,7 +119,7 @@ public class FileController {
         try {
             fullDirectory = principal.getName() + "/" + path;
 
-            List<ObjectsInfoDTO> objects = fileService.getObjectsName(fullDirectory, principal.getName());
+            List<ObjectsInfoDTO> objects = objectService.getObjectsName(fullDirectory, principal.getName());
             ResponseAllObjects<List<ObjectsInfoDTO>> responseAllObjects = new ResponseAllObjects<>(HttpStatus.FOUND, objects);
 
             return new ResponseEntity<>(responseAllObjects,HttpStatus.OK);

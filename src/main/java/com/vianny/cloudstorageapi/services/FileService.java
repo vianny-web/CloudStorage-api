@@ -1,7 +1,5 @@
 package com.vianny.cloudstorageapi.services;
 
-import com.vianny.cloudstorageapi.dto.ObjectDetailsDTO;
-import com.vianny.cloudstorageapi.dto.ObjectsInfoDTO;
 import com.vianny.cloudstorageapi.enums.TypeObject;
 import com.vianny.cloudstorageapi.exception.requiredException.ConflictRequiredException;
 import com.vianny.cloudstorageapi.exception.requiredException.NotFoundRequiredException;
@@ -15,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -49,20 +46,6 @@ public class FileService {
 
         objectRepository.save(objectDetails);
     }
-
-    @Transactional
-    public List<ObjectDetailsDTO> getObject(String filename, String fullDirectory, String login) {
-        if (objectRepository.findObjectDetailsByType(filename, TypeObject.File, fullDirectory, login) == null) {
-            throw new NotFoundRequiredException("File with this name is not found");
-        }
-        return objectRepository.getObjectDetailsByObjectLocation(filename, TypeObject.File, fullDirectory, login);
-    }
-
-    @Transactional
-    public List<ObjectsInfoDTO> getObjectsName(String fullDirectory, String login) {
-        return objectRepository.getObjectsNameByObjectLocation(fullDirectory, login);
-    }
-
     @Transactional
     public void deleteFile(String filename, String path, String login) {
         if (objectRepository.findByObjectNameAndObjectTypeAndObjectLocationAndAccount_Login(filename, TypeObject.File, path, login) == null) {

@@ -9,10 +9,7 @@ import com.vianny.cloudstorageapi.exception.requiredException.ConflictRequiredEx
 import com.vianny.cloudstorageapi.exception.requiredException.NoContentRequiredException;
 import com.vianny.cloudstorageapi.exception.requiredException.NoStorageSpaceRequiredException;
 import com.vianny.cloudstorageapi.exception.requiredException.NotFoundRequiredException;
-import com.vianny.cloudstorageapi.services.AccountService;
-import com.vianny.cloudstorageapi.services.FileService;
-import com.vianny.cloudstorageapi.services.FileTransferService;
-import com.vianny.cloudstorageapi.services.MinioService;
+import com.vianny.cloudstorageapi.services.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,6 +43,8 @@ public class FileControllerTest {
     private MinioService minioService;
     @Mock
     private FileService fileService;
+    @Mock
+    private ObjectService objectService;
     @Mock
     private FileTransferService fileTransferService;
     @Mock
@@ -168,7 +167,7 @@ public class FileControllerTest {
         ObjectDetailsDTO objectDetails = new ObjectDetailsDTO(filename, TypeObject.File, full_directory, size, time);
         objectDetailsList.add(objectDetails);
 
-        when(fileService.getObject(eq(filename), eq(full_directory), eq(principal.getName()))).thenReturn(objectDetailsList);
+        when(objectService.getObject(eq(filename), eq(full_directory), eq(principal.getName()))).thenReturn(objectDetailsList);
 
         mockMvc.perform(get("/myCloud/propertiesFile")
                         .param("path", path)
@@ -181,11 +180,11 @@ public class FileControllerTest {
                 .andExpect(jsonPath("$.properties[0].objectLocation").value(full_directory))
                 .andExpect(jsonPath("$.properties[0].objectSize").value(size));
 
-        verify(fileService, times(1)).getObject(eq(filename), eq(full_directory), eq(principal.getName()));
+        verify(objectService, times(1)).getObject(eq(filename), eq(full_directory), eq(principal.getName()));
     }
     @Test
     void testGetPropertiesFile_NotFoundRequiredException() throws Exception {
-        doThrow(NotFoundRequiredException.class).when(fileService).getObject(filename, full_directory, principal.getName());
+        doThrow(NotFoundRequiredException.class).when(objectService).getObject(filename, full_directory, principal.getName());
 
         mockMvc.perform(get("/myCloud/propertiesFile")
                         .param("path", path)
@@ -204,7 +203,7 @@ public class FileControllerTest {
         objectsInfoDTOS.add(objectInfo1);
         objectsInfoDTOS.add(objectInfo2);
 
-        when(fileService.getObjectsName(eq(full_directory), eq(principal.getName()))).thenReturn(objectsInfoDTOS);
+        when(objectService.getObjectsName(eq(full_directory), eq(principal.getName()))).thenReturn(objectsInfoDTOS);
 
         mockMvc.perform(get("/myCloud/")
                         .param("path", path)
@@ -216,7 +215,7 @@ public class FileControllerTest {
                 .andExpect(jsonPath("$.objects[1].objectName").value(foldername))
                 .andExpect(jsonPath("$.objects[1].objectType").value(TypeObject.Folder.toString()));
 
-        verify(fileService, times(1)).getObjectsName(eq(full_directory), eq(principal.getName()));
+        verify(objectService, times(1)).getObjectsName(eq(full_directory), eq(principal.getName()));
     }
 
 
