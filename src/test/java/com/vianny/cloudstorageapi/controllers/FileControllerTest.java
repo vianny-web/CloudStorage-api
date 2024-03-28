@@ -243,4 +243,30 @@ public class FileControllerTest {
                         .param("filename", filename))
                 .andExpect(status().isNotFound());
     }
+
+    // Тестирование всех случаев метода "getFilesByName"
+    @Test
+    void testGetFilesByName() throws Exception {
+        List<ObjectDetailsDTO> objectDetailsDTOS = new ArrayList<>();
+        ObjectDetailsDTO file1 = new ObjectDetailsDTO("file", TypeObject.File, "", 10, LocalDateTime.now());
+        ObjectDetailsDTO file2 = new ObjectDetailsDTO("file", TypeObject.File, "files/", 10, LocalDateTime.now());
+        ObjectDetailsDTO file3 = new ObjectDetailsDTO("file", TypeObject.Folder, "files/", 10, LocalDateTime.now());
+
+        objectDetailsDTOS.add(file1);
+        objectDetailsDTOS.add(file2);
+        objectDetailsDTOS.add(file3);
+
+        when(objectService.getObjectsByName_search("file", principal.getName())).thenReturn(objectDetailsDTOS);
+
+        mockMvc.perform(get("/myCloud/search")
+                        .principal(principal)
+                        .param("objectName", "file"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.httpStatus", is("FOUND")))
+                        .andExpect((jsonPath("$.objects[0].objectName", is("file"))))
+                        .andExpect((jsonPath("$.objects[1].objectName", is("file"))))
+                        .andExpect((jsonPath("$.objects[2].objectName", is("file"))));
+
+        verify(objectService, times(1)).getObjectsByName_search("file", principal.getName());
+    }
 }
