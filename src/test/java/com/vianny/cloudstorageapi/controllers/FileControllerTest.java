@@ -232,11 +232,11 @@ public class FileControllerTest {
 
         verify(minioService, times(1)).removeObject(full_directory, principal.getName());
         verify(accountService, times(1)).addSizeStorage(filename, principal.getName(), path);
-        verify(fileService, times(1)).deleteFile(filename, path, principal.getName());
+        verify(fileService, times(1)).deleteFile(filename, full_directory, principal.getName());
     }
     @Test
     void testDeleteFile_NotFoundRequiredException() throws Exception {
-        doThrow(NotFoundRequiredException.class).when(fileService).deleteFile(filename, path, principal.getName());
+        doThrow(NotFoundRequiredException.class).when(fileService).deleteFile(filename, full_directory, principal.getName());
 
         mockMvc.perform(delete("/myCloud/")
                         .principal(principal)
