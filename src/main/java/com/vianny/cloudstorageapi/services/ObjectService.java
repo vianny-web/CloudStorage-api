@@ -4,7 +4,7 @@ import com.vianny.cloudstorageapi.dto.ObjectDetailsDTO;
 import com.vianny.cloudstorageapi.dto.ObjectsInfoDTO;
 import com.vianny.cloudstorageapi.enums.TypeObject;
 import com.vianny.cloudstorageapi.exception.requiredException.NotFoundRequiredException;
-import com.vianny.cloudstorageapi.repositories.AccountRepository;
+import com.vianny.cloudstorageapi.models.ObjectDetails;
 import com.vianny.cloudstorageapi.repositories.ObjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,5 +30,9 @@ public class ObjectService {
     @Transactional
     public List<ObjectsInfoDTO> getObjectsName(String fullDirectory, String login) {
         return objectRepository.getObjectsNameByObjectLocation(fullDirectory, login);
+    }
+
+    public List<ObjectDetailsDTO> getObjectsByName_search(String objectName, String login) {
+        return objectRepository.findObjectsByName(objectName, login);
     }
 }

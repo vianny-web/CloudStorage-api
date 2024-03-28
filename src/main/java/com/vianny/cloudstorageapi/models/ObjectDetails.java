@@ -1,5 +1,6 @@
 package com.vianny.cloudstorageapi.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vianny.cloudstorageapi.enums.TypeObject;
 import jakarta.persistence.*;
 
@@ -24,6 +25,7 @@ public class ObjectDetails {
     @Column(name = "upload_date")
     private LocalDateTime uploadDate;
 
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "account_id")
     private Account account;

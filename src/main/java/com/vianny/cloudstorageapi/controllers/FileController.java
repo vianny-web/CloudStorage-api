@@ -6,6 +6,7 @@ import com.vianny.cloudstorageapi.dto.response.ResponseAllObjects;
 import com.vianny.cloudstorageapi.dto.response.ResponseMessage;
 import com.vianny.cloudstorageapi.dto.response.ResponseObjectDetails;
 import com.vianny.cloudstorageapi.exception.requiredException.*;
+import com.vianny.cloudstorageapi.models.ObjectDetails;
 import com.vianny.cloudstorageapi.services.*;
 import io.minio.errors.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,6 +122,18 @@ public class FileController {
 
             List<ObjectsInfoDTO> objects = objectService.getObjectsName(fullDirectory, principal.getName());
             ResponseAllObjects<List<ObjectsInfoDTO>> responseAllObjects = new ResponseAllObjects<>(HttpStatus.FOUND, objects);
+
+            return new ResponseEntity<>(responseAllObjects,HttpStatus.OK);
+        } catch (Exception e) {
+            throw new ServerErrorRequiredException(e.getMessage());
+        }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ResponseAllObjects<List<ObjectDetailsDTO>>> getFilesByName(@RequestParam("objectName") String objectName, Principal principal) {
+        try {
+            List<ObjectDetailsDTO> objects = objectService.getObjectsByName_search(objectName, principal.getName());
+            ResponseAllObjects<List<ObjectDetailsDTO>> responseAllObjects = new ResponseAllObjects<>(HttpStatus.FOUND, objects);
 
             return new ResponseEntity<>(responseAllObjects,HttpStatus.OK);
         } catch (Exception e) {
