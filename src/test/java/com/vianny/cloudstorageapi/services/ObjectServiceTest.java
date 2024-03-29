@@ -1,6 +1,7 @@
 package com.vianny.cloudstorageapi.services;
 
 import com.vianny.cloudstorageapi.dto.ObjectDetailsDTO;
+import com.vianny.cloudstorageapi.dto.ObjectsInfoDTO;
 import com.vianny.cloudstorageapi.enums.TypeObject;
 import com.vianny.cloudstorageapi.exception.requiredException.NotFoundRequiredException;
 import com.vianny.cloudstorageapi.models.ObjectDetails;
@@ -38,6 +39,7 @@ class ObjectServiceTest {
         fullDirectory = principal.getName() + "/" + "files/";
     }
 
+    // Тестирование всех случаев метода "getObject"
     @Test
     void testGetObject() {
         List<ObjectDetailsDTO> objectDetailsDTOS = new ArrayList<>();
@@ -60,5 +62,38 @@ class ObjectServiceTest {
                 .thenReturn(null);
 
         assertThrows(NotFoundRequiredException.class,() -> objectService.getObject("file", "user-1/files/", principal.getName()));
+    }
+
+
+    // Тестирование всех случаев метода "getObjectsName"
+    @Test
+    void testGetObjectsName() {
+        List<ObjectsInfoDTO> objectsInfoDTOS = new ArrayList<>();
+        ObjectsInfoDTO file1 = new ObjectsInfoDTO("file-1", TypeObject.File);
+        ObjectsInfoDTO file2 = new ObjectsInfoDTO("file-2", TypeObject.File);
+        ObjectsInfoDTO folder1 = new ObjectsInfoDTO("folder-1", TypeObject.Folder);
+        ObjectsInfoDTO folder2 = new ObjectsInfoDTO("folder-2", TypeObject.Folder);
+
+        objectsInfoDTOS.add(file1);
+        objectsInfoDTOS.add(file2);
+        objectsInfoDTOS.add(folder1);
+        objectsInfoDTOS.add(folder2);
+
+        Mockito.when(objectRepository.getObjectsNameByObjectLocation(fullDirectory, principal.getName())).thenReturn(objectsInfoDTOS);
+
+        List<ObjectsInfoDTO> objects = objectService.getObjectsName(fullDirectory, principal.getName());
+
+        assertEquals(objectsInfoDTOS, objects);
+    }
+
+    @Test
+    void testGetObjectsName_empty() {
+        List<ObjectsInfoDTO> objectsInfoDTOS = new ArrayList<>();
+
+        Mockito.when(objectRepository.getObjectsNameByObjectLocation(fullDirectory, principal.getName())).thenReturn(objectsInfoDTOS);
+
+        List<ObjectsInfoDTO> objects = objectService.getObjectsName(fullDirectory, principal.getName());
+
+        assertEquals(objectsInfoDTOS, objects);
     }
 }
