@@ -43,25 +43,25 @@ class ObjectServiceTest {
     @Test
     void testGetObject() {
         List<ObjectDetailsDTO> objectDetailsDTOS = new ArrayList<>();
-        ObjectDetailsDTO file1 = new ObjectDetailsDTO("file", TypeObject.File, "user-1/files/", 10, LocalDateTime.now());
+        ObjectDetailsDTO file1 = new ObjectDetailsDTO("file", TypeObject.File, fullDirectory, 10, LocalDateTime.now());
         objectDetailsDTOS.add(file1);
 
-        ObjectDetails objectDetails = new ObjectDetails("file", TypeObject.File, 10,"user-1/files/", LocalDateTime.now());
+        ObjectDetails objectDetails = new ObjectDetails("file", TypeObject.File, 10,fullDirectory, LocalDateTime.now());
 
-        Mockito.when(objectRepository.findObjectDetailsByType("file", TypeObject.File, "user-1/files/", principal.getName()))
+        Mockito.when(objectRepository.findObjectDetailsByType("file", TypeObject.File, fullDirectory, principal.getName()))
                 .thenReturn(objectDetails);
-        Mockito.when(objectRepository.getObjectDetailsByObjectLocation("file", TypeObject.File, "user-1/files/", principal.getName())).thenReturn(objectDetailsDTOS);
+        Mockito.when(objectRepository.getObjectDetailsByObjectLocation("file", TypeObject.File, fullDirectory, principal.getName())).thenReturn(objectDetailsDTOS);
 
-        List<ObjectDetailsDTO> result = objectService.getObject("file", "user-1/files/", principal.getName());
+        List<ObjectDetailsDTO> result = objectService.getObject("file", fullDirectory, principal.getName());
 
         assertEquals(objectDetailsDTOS, result);
     }
     @Test
     void testGetObject_NotFoundRequiredException() {
-        Mockito.when(objectRepository.findObjectDetailsByType("file", TypeObject.File, "user-1/files/", principal.getName()))
+        Mockito.when(objectRepository.findObjectDetailsByType("file", TypeObject.File, fullDirectory, principal.getName()))
                 .thenReturn(null);
 
-        assertThrows(NotFoundRequiredException.class,() -> objectService.getObject("file", "user-1/files/", principal.getName()));
+        assertThrows(NotFoundRequiredException.class,() -> objectService.getObject("file", fullDirectory, principal.getName()));
     }
 
 
