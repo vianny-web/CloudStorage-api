@@ -149,8 +149,8 @@ public class FileController {
             fullDirectory = principal.getName() + "/" + path;
 
             minioService.removeObject(fullDirectory, principal.getName());
+            accountService.addSizeStorage(filename, principal.getName(), fullDirectory);
             fileService.deleteFile(filename, fullDirectory, principal.getName());
-            accountService.addSizeStorage(filename, principal.getName(), path);
 
         }
         catch (NotFoundRequiredException e) {

@@ -230,7 +230,7 @@ public class FileControllerTest {
                 .andExpect(jsonPath("$.httpStatus", is("OK")));
 
         verify(minioService, times(1)).removeObject(full_directory, principal.getName());
-        verify(accountService, times(1)).addSizeStorage(filename, principal.getName(), path);
+        verify(accountService, times(1)).addSizeStorage(filename, principal.getName(), full_directory);
         verify(fileService, times(1)).deleteFile(filename, full_directory, principal.getName());
     }
     @Test
