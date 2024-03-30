@@ -74,19 +74,17 @@ public class SecurityController {
 
             account.setLogin(signUpRequest.getLogin());
             account.setPassword(hashed);
-            accountRepository.save(account);
 
-            try {
-                minioService.createBucket(signUpRequest.getLogin());
-            }
-            catch (ServerException | InsufficientDataException | ErrorResponseException | IOException |
-                     NoSuchAlgorithmException | InvalidKeyException | InvalidResponseException | XmlParserException |
-                     InternalException e) {
-                throw new ServerErrorRequiredException(e.getMessage());
-            }
+            minioService.createBucket(signUpRequest.getLogin());
+            accountRepository.save(account);
         }
         catch (BadCredentialsException e) {
             throw new UnauthorizedRequiredException(HttpStatus.UNAUTHORIZED, "Registration failed");
+        }
+        catch (ServerException | InsufficientDataException | ErrorResponseException | IOException |
+               NoSuchAlgorithmException | InvalidKeyException | InvalidResponseException | XmlParserException |
+               InternalException e) {
+            throw new ServerErrorRequiredException(e.getMessage());
         }
 
         ResponseMessage responseMessage = new ResponseMessage(HttpStatus.CREATED, "Successfully");
