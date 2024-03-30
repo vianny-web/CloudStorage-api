@@ -9,6 +9,7 @@ import com.vianny.cloudstorageapi.exception.requiredException.*;
 import com.vianny.cloudstorageapi.models.ObjectDetails;
 import com.vianny.cloudstorageapi.services.*;
 import io.minio.errors.*;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -98,7 +99,7 @@ public class FileController {
     }
 
     @GetMapping("/propertiesFile")
-    public ResponseEntity<ResponseObjectDetails<List<ObjectDetailsDTO>>> getPropertiesFile(@RequestParam("path") String path, @RequestParam("filename") String filename, Principal principal) {
+    public ResponseEntity<ResponseObjectDetails<List<ObjectDetailsDTO>>> getPropertiesFile(@RequestParam("path") String path, @RequestParam("filename") @NotBlank String filename, Principal principal) {
         try {
             fullDirectory = principal.getName() + "/" + path;
 
@@ -130,7 +131,7 @@ public class FileController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<ResponseAllObjects<List<ObjectDetailsDTO>>> getFilesByName(@RequestParam("objectName") String objectName, Principal principal) {
+    public ResponseEntity<ResponseAllObjects<List<ObjectDetailsDTO>>> getFilesByName(@RequestParam("objectName") @NotBlank String objectName, Principal principal) {
         try {
             List<ObjectDetailsDTO> objects = objectService.getObjectsByName_search(objectName, principal.getName());
             ResponseAllObjects<List<ObjectDetailsDTO>> responseAllObjects = new ResponseAllObjects<>(HttpStatus.FOUND, objects);
@@ -143,7 +144,7 @@ public class FileController {
 
     @DeleteMapping("/")
     @Transactional
-    public ResponseEntity<ResponseMessage> deleteFile(@RequestParam("path") String path, @RequestParam("filename") String filename, Principal principal) {
+    public ResponseEntity<ResponseMessage> deleteFile(@RequestParam("path") String path, @RequestParam("filename") @NotBlank String filename, Principal principal) {
         try {
             fullDirectory = principal.getName() + "/" + path;
 

@@ -7,6 +7,7 @@ import com.vianny.cloudstorageapi.exception.requiredException.NotFoundRequiredEx
 import com.vianny.cloudstorageapi.exception.requiredException.ServerErrorRequiredException;
 import com.vianny.cloudstorageapi.services.FolderService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +44,7 @@ public class FolderController {
     }
 
     @DeleteMapping("/deleteFolder/")
-    public ResponseEntity<ResponseMessage> deleteFolder(@RequestParam("path") String path, @RequestParam("folderName") String folderName, Principal principal) {
+    public ResponseEntity<ResponseMessage> deleteFolder(@RequestParam("path") String path, @RequestParam("folderName") @NotBlank String folderName, Principal principal) {
         try {
             fullDirectory = principal.getName() + "/" + path;
             folderService.deleteFolder(folderName, fullDirectory, principal.getName());
