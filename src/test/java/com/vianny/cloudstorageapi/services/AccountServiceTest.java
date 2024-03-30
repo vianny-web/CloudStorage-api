@@ -13,6 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,56 +33,58 @@ public class AccountServiceTest {
     @InjectMocks
     private AccountService accountService;
 
+    Principal principal_1, principal_2;
 
     @BeforeEach
     void setUp() {
-
+        principal_1 = () -> "user-1";
+        principal_2 = () -> "user-2";
     }
 
     @Test
-    void shouldReturnAccountDetailsSuccessfully() {
+    void testGetAccountDetails() {
         List<AccountDTO> expectedAccountDTOList = new ArrayList<>();
-        expectedAccountDTOList.add(new AccountDTO("user", 1000));
+        expectedAccountDTOList.add(new AccountDTO(principal_1.getName(), 1000));
 
-        when(accountRepository.getAccountDetailsByLogin("user")).thenReturn(expectedAccountDTOList);
+        when(accountRepository.getAccountDetailsByLogin(principal_1.getName())).thenReturn(expectedAccountDTOList);
 
-        List<AccountDTO> actualAccountDTOList = accountService.getAccountDetails("user");
+        List<AccountDTO> actualAccountDTOList = accountService.getAccountDetails(principal_1.getName());
 
         assertEquals(expectedAccountDTOList, actualAccountDTOList);
     }
 
     @Test
-    void shouldReduceSizeStorageSuccessfullyWhenSpaceIsAvailable() {
-        when(accountRepository.findSizeStorageByLogin("test1")).thenReturn(10000);
-        when(accountRepository.findSizeStorageByLogin("test2")).thenReturn(1000);
+    void testReduceSizeStorage() {
+        when(accountRepository.findSizeStorageByLogin(principal_1.getName())).thenReturn(10000);
+        when(accountRepository.findSizeStorageByLogin(principal_2.getName())).thenReturn(1000);
 
-        accountService.reduceSizeStorage("test1", 1000);
-        verify(accountRepository).subtractBytesFromSizeStorage("test1", 1000);
+        accountService.reduceSizeStorage(principal_1.getName(), 1000);
+        verify(accountRepository).subtractBytesFromSizeStorage(principal_1.getName(), 1000);
 
-        accountService.reduceSizeStorage("test2", 1000);
-        verify(accountRepository).subtractBytesFromSizeStorage("test2", 1000);
+        accountService.reduceSizeStorage(principal_2.getName(), 1000);
+        verify(accountRepository).subtractBytesFromSizeStorage(principal_2.getName(), 1000);
     }
 
     @Test
-    void shouldThrowNoStorageSpaceRequiredExceptionWhenSpaceIsNotAvailable() {
-        when(accountRepository.findSizeStorageByLogin("test")).thenReturn(100);
+    void testReduceSizeStorage_NoStorageSpaceRequiredException() {
+        when(accountRepository.findSizeStorageByLogin(principal_1.getName())).thenReturn(100);
 
         assertThrows(NoStorageSpaceRequiredException.class, () -> {
-            accountService.reduceSizeStorage("test", 1000);
+            accountService.reduceSizeStorage(principal_1.getName(), 1000);
         });
     }
 
     @Test
-    void shouldAddSizeStorageSuccessfully() {
+    void testAddSizeStorage() {
         ObjectDetails objectDetails = new ObjectDetails();
         objectDetails.setObjectSize(10000);
 
-        when(objectRepository.findObjectDetailsByType("nameTest", TypeObject.File, "/test1/", "test1"))
+        when(objectRepository.findObjectDetailsByType("file", TypeObject.File, "files/", principal_1.getName()))
                 .thenReturn(objectDetails);
 
-        accountService.addSizeStorage("nameTest","test1", "/test1/");
+        accountService.addSizeStorage("file",principal_1.getName(), "files/");
 
-        verify(accountRepository).updateSizeStorageByLogin("test1", 10000);
+        verify(accountRepository).updateSizeStorageByLogin(principal_1.getName(), 10000);
     }
 
 }
