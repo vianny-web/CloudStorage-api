@@ -26,25 +26,28 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AccountControllerTest {
     @Mock
     private AccountService accountService;
-
     @InjectMocks
     private AccountController accountController;
-
     private MockMvc mockMvc;
+
+    Principal principal;
 
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(accountController).build();
+
+        principal = () -> "user";
     }
 
     @Test
-    void shouldReturnAccountDetailsSuccessfully() throws Exception {
+    void testGetPropertiesAccount() throws Exception {
         String testLogin = "user";
+
         Principal principal = mock(Principal.class);
         when(principal.getName()).thenReturn(testLogin);
 
         List<AccountDTO> accountDTOList = new ArrayList<>();
-        accountDTOList.add(new AccountDTO("user", 1000));
+        accountDTOList.add(new AccountDTO(principal.getName(), 1000));
         when(accountService.getAccountDetails(testLogin)).thenReturn(accountDTOList);
 
         mockMvc.perform(get("/myCloud/account/details").principal(principal))
