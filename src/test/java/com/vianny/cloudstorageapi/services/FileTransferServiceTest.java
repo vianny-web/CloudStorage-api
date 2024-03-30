@@ -2,7 +2,6 @@ package com.vianny.cloudstorageapi.services;
 
 import com.vianny.cloudstorageapi.config.MinioConfig;
 import com.vianny.cloudstorageapi.exception.requiredException.NoContentRequiredException;
-import io.minio.GetObjectResponse;
 import io.minio.MinioClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,15 +9,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.mock.web.MockMultipartFile;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.security.Principal;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
