@@ -1,6 +1,7 @@
 package com.vianny.cloudstorageapi.services;
 
 import com.vianny.cloudstorageapi.config.MinioConfig;
+import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.RemoveObjectArgs;
 import io.minio.errors.*;
@@ -21,12 +22,14 @@ public class MinioService {
     }
 
     public void createBucket(String username) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
-        minioConfig.minioClient().makeBucket(
-                MakeBucketArgs
-                        .builder()
-                        .bucket(username)
-                        .build()
-        );
+        if (!minioConfig.minioClient().bucketExists(BucketExistsArgs.builder().bucket(username).build())) {
+            minioConfig.minioClient().makeBucket(
+                    MakeBucketArgs
+                            .builder()
+                            .bucket(username)
+                            .build()
+            );
+        }
     }
 
     public void removeObject(String fullDirectory, String login) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
