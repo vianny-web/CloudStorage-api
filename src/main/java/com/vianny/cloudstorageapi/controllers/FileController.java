@@ -116,7 +116,7 @@ public class FileController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<ResponseAllObjects<List<ObjectInfoMiniDTO>>> getFiles(@RequestParam("path") String path, Principal principal) {
+    public ResponseEntity<ResponseAllObjects<List<ObjectInfoMiniDTO>>> getFilesFromPath(@RequestParam("path") String path, Principal principal) {
         try {
             fullDirectory = principal.getName() + "/" + path;
 
