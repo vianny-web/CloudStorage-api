@@ -1,6 +1,6 @@
 package com.vianny.cloudstorageapi.services;
 
-import com.vianny.cloudstorageapi.dto.AccountDTO;
+import com.vianny.cloudstorageapi.dto.response.account.AccountInfoDTO;
 import com.vianny.cloudstorageapi.enums.TypeObject;
 import com.vianny.cloudstorageapi.exception.requiredException.NoStorageSpaceRequiredException;
 import com.vianny.cloudstorageapi.models.Account;
@@ -39,7 +39,7 @@ public class AccountService implements UserDetailsService {
     }
 
     @Transactional
-    public List<AccountDTO> getAccountDetails (String login) {
+    public List<AccountInfoDTO> getAccountDetails (String login) {
         return accountRepository.getAccountDetailsByLogin(login);
     }
 

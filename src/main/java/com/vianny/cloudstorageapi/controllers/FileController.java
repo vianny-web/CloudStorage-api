@@ -1,12 +1,11 @@
 package com.vianny.cloudstorageapi.controllers;
 
-import com.vianny.cloudstorageapi.dto.ObjectDetailsDTO;
-import com.vianny.cloudstorageapi.dto.ObjectsInfoDTO;
-import com.vianny.cloudstorageapi.dto.response.ResponseAllObjects;
-import com.vianny.cloudstorageapi.dto.response.ResponseMessage;
-import com.vianny.cloudstorageapi.dto.response.ResponseObjectDetails;
+import com.vianny.cloudstorageapi.dto.response.object.ObjectDetailsDTO;
+import com.vianny.cloudstorageapi.dto.response.object.ObjectInfoMiniDTO;
+import com.vianny.cloudstorageapi.dto.response.object.ResponseAllObjects;
+import com.vianny.cloudstorageapi.dto.response.message.ResponseMainMessage;
+import com.vianny.cloudstorageapi.dto.response.object.ResponseObjectInfo;
 import com.vianny.cloudstorageapi.exception.requiredException.*;
-import com.vianny.cloudstorageapi.models.ObjectDetails;
 import com.vianny.cloudstorageapi.services.*;
 import io.minio.errors.*;
 import jakarta.validation.constraints.NotBlank;
@@ -59,7 +58,7 @@ public class FileController {
 
     @PostMapping("/upload")
     @Transactional
-    public ResponseEntity<ResponseMessage> uploadFileToTheServer(@RequestParam MultipartFile file, @RequestParam String path, Principal principal) {
+    public ResponseEntity<ResponseMainMessage> uploadFileToTheServer(@RequestParam MultipartFile file, @RequestParam String path, Principal principal) {
         try {
             fullDirectory = principal.getName() + "/" + path;
 
@@ -74,8 +73,8 @@ public class FileController {
             throw new ServerErrorRequiredException(e.getMessage());
         }
 
-        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.CREATED, "File successfully uploaded");
-        return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
+        ResponseMainMessage responseMainMessage = new ResponseMainMessage(HttpStatus.CREATED, "File successfully uploaded");
+        return new ResponseEntity<>(responseMainMessage, HttpStatus.CREATED);
     }
 
     @GetMapping("/download/")
@@ -99,12 +98,12 @@ public class FileController {
     }
 
     @GetMapping("/propertiesFile")
-    public ResponseEntity<ResponseObjectDetails<List<ObjectDetailsDTO>>> getPropertiesFile(@RequestParam("path") String path, @RequestParam("filename") @NotBlank String filename, Principal principal) {
+    public ResponseEntity<ResponseObjectInfo<List<ObjectDetailsDTO>>> getPropertiesFile(@RequestParam("path") String path, @RequestParam("filename") @NotBlank String filename, Principal principal) {
         try {
             fullDirectory = principal.getName() + "/" + path;
 
             List<ObjectDetailsDTO> objectDetails = objectService.getObject(filename, fullDirectory, principal.getName());
-            ResponseObjectDetails<List<ObjectDetailsDTO>> dataObject = new ResponseObjectDetails<>(HttpStatus.FOUND, objectDetails);
+            ResponseObjectInfo<List<ObjectDetailsDTO>> dataObject = new ResponseObjectInfo<>(HttpStatus.FOUND, objectDetails);
             return new ResponseEntity<>(dataObject, HttpStatus.FOUND);
 
         }
@@ -117,12 +116,12 @@ public class FileController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<ResponseAllObjects<List<ObjectsInfoDTO>>> getFiles(@RequestParam("path") String path, Principal principal) {
+    public ResponseEntity<ResponseAllObjects<List<ObjectInfoMiniDTO>>> getFiles(@RequestParam("path") String path, Principal principal) {
         try {
             fullDirectory = principal.getName() + "/" + path;
 
-            List<ObjectsInfoDTO> objects = objectService.getObjectsName(fullDirectory, principal.getName());
-            ResponseAllObjects<List<ObjectsInfoDTO>> responseAllObjects = new ResponseAllObjects<>(HttpStatus.FOUND, objects);
+            List<ObjectInfoMiniDTO> objects = objectService.getObjectsName(fullDirectory, principal.getName());
+            ResponseAllObjects<List<ObjectInfoMiniDTO>> responseAllObjects = new ResponseAllObjects<>(HttpStatus.FOUND, objects);
 
             return new ResponseEntity<>(responseAllObjects,HttpStatus.FOUND);
         } catch (Exception e) {
@@ -144,7 +143,7 @@ public class FileController {
 
     @DeleteMapping("/")
     @Transactional
-    public ResponseEntity<ResponseMessage> deleteFile(@RequestParam("path") String path, @RequestParam("filename") @NotBlank String filename, Principal principal) {
+    public ResponseEntity<ResponseMainMessage> deleteFile(@RequestParam("path") String path, @RequestParam("filename") @NotBlank String filename, Principal principal) {
         try {
             fullDirectory = principal.getName() + "/" + path;
 
@@ -160,7 +159,7 @@ public class FileController {
             throw new ServerErrorRequiredException(e.getMessage());
         }
 
-        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK, "File successfully deleted");
-        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+        ResponseMainMessage responseMainMessage = new ResponseMainMessage(HttpStatus.OK, "File successfully deleted");
+        return new ResponseEntity<>(responseMainMessage, HttpStatus.OK);
     }
 }

@@ -1,7 +1,6 @@
 package com.vianny.cloudstorageapi.repositories;
 
-import com.vianny.cloudstorageapi.dto.AccountDTO;
-import com.vianny.cloudstorageapi.dto.ObjectsInfoDTO;
+import com.vianny.cloudstorageapi.dto.response.account.AccountInfoDTO;
 import com.vianny.cloudstorageapi.models.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -26,6 +25,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Query("UPDATE Account a SET a.size_storage = a.size_storage + :sizeObject WHERE a.login = :login")
     void updateSizeStorageByLogin(@Param("login") String login, @Param("sizeObject") int sizeObject);
 
-    @Query("SELECT new com.vianny.cloudstorageapi.dto.AccountDTO(account.login, account.size_storage) FROM Account account WHERE account.login = :login")
-    List<AccountDTO> getAccountDetailsByLogin(@Param("login") String login);
+    @Query("SELECT new com.vianny.cloudstorageapi.dto.response.account.AccountInfoDTO(account.login, account.size_storage) FROM Account account WHERE account.login = :login")
+    List<AccountInfoDTO> getAccountDetailsByLogin(@Param("login") String login);
 }

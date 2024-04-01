@@ -1,6 +1,6 @@
 package com.vianny.cloudstorageapi.services;
 
-import com.vianny.cloudstorageapi.dto.AccountDTO;
+import com.vianny.cloudstorageapi.dto.response.account.AccountInfoDTO;
 import com.vianny.cloudstorageapi.enums.TypeObject;
 import com.vianny.cloudstorageapi.exception.requiredException.NoStorageSpaceRequiredException;
 import com.vianny.cloudstorageapi.models.ObjectDetails;
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.security.Principal;
@@ -43,14 +42,14 @@ public class AccountServiceTest {
 
     @Test
     void testGetAccountDetails() {
-        List<AccountDTO> expectedAccountDTOList = new ArrayList<>();
-        expectedAccountDTOList.add(new AccountDTO(principal_1.getName(), 1000));
+        List<AccountInfoDTO> expectedAccountInfoDTOList = new ArrayList<>();
+        expectedAccountInfoDTOList.add(new AccountInfoDTO(principal_1.getName(), 1000));
 
-        when(accountRepository.getAccountDetailsByLogin(principal_1.getName())).thenReturn(expectedAccountDTOList);
+        when(accountRepository.getAccountDetailsByLogin(principal_1.getName())).thenReturn(expectedAccountInfoDTOList);
 
-        List<AccountDTO> actualAccountDTOList = accountService.getAccountDetails(principal_1.getName());
+        List<AccountInfoDTO> actualAccountInfoDTOList = accountService.getAccountDetails(principal_1.getName());
 
-        assertEquals(expectedAccountDTOList, actualAccountDTOList);
+        assertEquals(expectedAccountInfoDTOList, actualAccountInfoDTOList);
     }
 
     @Test

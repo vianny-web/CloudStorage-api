@@ -1,7 +1,7 @@
 package com.vianny.cloudstorageapi.services;
 
-import com.vianny.cloudstorageapi.dto.ObjectDetailsDTO;
-import com.vianny.cloudstorageapi.dto.ObjectsInfoDTO;
+import com.vianny.cloudstorageapi.dto.response.object.ObjectDetailsDTO;
+import com.vianny.cloudstorageapi.dto.response.object.ObjectInfoMiniDTO;
 import com.vianny.cloudstorageapi.enums.TypeObject;
 import com.vianny.cloudstorageapi.exception.requiredException.NotFoundRequiredException;
 import com.vianny.cloudstorageapi.models.ObjectDetails;
@@ -68,32 +68,32 @@ class ObjectServiceTest {
     // Тестирование всех случаев метода "getObjectsName"
     @Test
     void testGetObjectsName() {
-        List<ObjectsInfoDTO> objectsInfoDTOS = new ArrayList<>();
-        ObjectsInfoDTO file1 = new ObjectsInfoDTO("file-1", TypeObject.File);
-        ObjectsInfoDTO file2 = new ObjectsInfoDTO("file-2", TypeObject.File);
-        ObjectsInfoDTO folder1 = new ObjectsInfoDTO("folder-1", TypeObject.Folder);
-        ObjectsInfoDTO folder2 = new ObjectsInfoDTO("folder-2", TypeObject.Folder);
+        List<ObjectInfoMiniDTO> objectInfoMiniDTOS = new ArrayList<>();
+        ObjectInfoMiniDTO file1 = new ObjectInfoMiniDTO("file-1", TypeObject.File);
+        ObjectInfoMiniDTO file2 = new ObjectInfoMiniDTO("file-2", TypeObject.File);
+        ObjectInfoMiniDTO folder1 = new ObjectInfoMiniDTO("folder-1", TypeObject.Folder);
+        ObjectInfoMiniDTO folder2 = new ObjectInfoMiniDTO("folder-2", TypeObject.Folder);
 
-        objectsInfoDTOS.add(file1);
-        objectsInfoDTOS.add(file2);
-        objectsInfoDTOS.add(folder1);
-        objectsInfoDTOS.add(folder2);
+        objectInfoMiniDTOS.add(file1);
+        objectInfoMiniDTOS.add(file2);
+        objectInfoMiniDTOS.add(folder1);
+        objectInfoMiniDTOS.add(folder2);
 
-        Mockito.when(objectRepository.getObjectsNameByObjectLocation(fullDirectory, principal.getName())).thenReturn(objectsInfoDTOS);
+        Mockito.when(objectRepository.getObjectsNameByObjectLocation(fullDirectory, principal.getName())).thenReturn(objectInfoMiniDTOS);
 
-        List<ObjectsInfoDTO> objects = objectService.getObjectsName(fullDirectory, principal.getName());
+        List<ObjectInfoMiniDTO> objects = objectService.getObjectsName(fullDirectory, principal.getName());
 
-        assertEquals(objectsInfoDTOS, objects);
+        assertEquals(objectInfoMiniDTOS, objects);
     }
 
     @Test
     void testGetObjectsName_empty() {
-        List<ObjectsInfoDTO> objectsInfoDTOS = new ArrayList<>();
+        List<ObjectInfoMiniDTO> objectInfoMiniDTOS = new ArrayList<>();
 
-        Mockito.when(objectRepository.getObjectsNameByObjectLocation(fullDirectory, principal.getName())).thenReturn(objectsInfoDTOS);
+        Mockito.when(objectRepository.getObjectsNameByObjectLocation(fullDirectory, principal.getName())).thenReturn(objectInfoMiniDTOS);
 
-        List<ObjectsInfoDTO> objects = objectService.getObjectsName(fullDirectory, principal.getName());
+        List<ObjectInfoMiniDTO> objects = objectService.getObjectsName(fullDirectory, principal.getName());
 
-        assertEquals(objectsInfoDTOS, objects);
+        assertEquals(objectInfoMiniDTOS, objects);
     }
 }

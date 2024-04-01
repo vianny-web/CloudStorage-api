@@ -1,16 +1,16 @@
-package com.vianny.cloudstorageapi.dto.response;
+package com.vianny.cloudstorageapi.dto.response.message;
 
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class ResponseMessage {
+public class ResponseMainMessage {
     private HttpStatus httpStatus;
     private String message;
     private final LocalDateTime dateTime = LocalDateTime.now();
 
-    public ResponseMessage(HttpStatus httpStatus, String message) {
+    public ResponseMainMessage(HttpStatus httpStatus, String message) {
         this.httpStatus = httpStatus;
         this.message = message;
     }

@@ -1,15 +1,15 @@
-package com.vianny.cloudstorageapi.dto.response;
+package com.vianny.cloudstorageapi.dto.response.account;
 
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
-public class ResponseAccountDetails<T> {
+public class ResponseAccountInfo<T> {
     private HttpStatus httpStatus;
     private T details;
     private final LocalDateTime dateTime = LocalDateTime.now();
 
-    public ResponseAccountDetails(HttpStatus httpStatus, T details) {
+    public ResponseAccountInfo(HttpStatus httpStatus, T details) {
         this.httpStatus = httpStatus;
         this.details = details;
     }

@@ -1,7 +1,7 @@
 package com.vianny.cloudstorageapi.controllers;
 
 import com.vianny.cloudstorageapi.dto.request.RequestFolder;
-import com.vianny.cloudstorageapi.dto.response.ResponseMessage;
+import com.vianny.cloudstorageapi.dto.response.message.ResponseMainMessage;
 import com.vianny.cloudstorageapi.exception.requiredException.ConflictRequiredException;
 import com.vianny.cloudstorageapi.exception.requiredException.NotFoundRequiredException;
 import com.vianny.cloudstorageapi.exception.requiredException.ServerErrorRequiredException;
@@ -27,7 +27,7 @@ public class FolderController {
     private String fullDirectory;
 
     @PostMapping("/createFolder")
-    public ResponseEntity<ResponseMessage> createFolder(@Valid @RequestBody RequestFolder requestFolder, Principal principal) {
+    public ResponseEntity<ResponseMainMessage> createFolder(@Valid @RequestBody RequestFolder requestFolder, Principal principal) {
         try {
             fullDirectory = principal.getName() + "/" + requestFolder.getPath();
             folderService.saveFolder(requestFolder.getFolderName(), fullDirectory, principal.getName());
@@ -39,12 +39,12 @@ public class FolderController {
             throw new ServerErrorRequiredException(e.getMessage());
         }
 
-        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.CREATED, "Folder successfully created");
-        return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
+        ResponseMainMessage responseMainMessage = new ResponseMainMessage(HttpStatus.CREATED, "Folder successfully created");
+        return new ResponseEntity<>(responseMainMessage, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/deleteFolder/")
-    public ResponseEntity<ResponseMessage> deleteFolder(@RequestParam("path") String path, @RequestParam("folderName") @NotBlank String folderName, Principal principal) {
+    public ResponseEntity<ResponseMainMessage> deleteFolder(@RequestParam("path") String path, @RequestParam("folderName") @NotBlank String folderName, Principal principal) {
         try {
             fullDirectory = principal.getName() + "/" + path;
             folderService.deleteFolder(folderName, fullDirectory, principal.getName());
@@ -56,7 +56,7 @@ public class FolderController {
             throw new ServerErrorRequiredException(e.getMessage());
         }
 
-        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK, "Folder successfully delete");
-        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+        ResponseMainMessage responseMainMessage = new ResponseMainMessage(HttpStatus.OK, "Folder successfully delete");
+        return new ResponseEntity<>(responseMainMessage, HttpStatus.OK);
     }
 }

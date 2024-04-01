@@ -4,7 +4,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-import com.vianny.cloudstorageapi.dto.AccountDTO;
+import com.vianny.cloudstorageapi.dto.response.account.AccountInfoDTO;
 import com.vianny.cloudstorageapi.services.AccountService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,9 +46,9 @@ class AccountControllerTest {
         Principal principal = mock(Principal.class);
         when(principal.getName()).thenReturn(testLogin);
 
-        List<AccountDTO> accountDTOList = new ArrayList<>();
-        accountDTOList.add(new AccountDTO(principal.getName(), 1000));
-        when(accountService.getAccountDetails(testLogin)).thenReturn(accountDTOList);
+        List<AccountInfoDTO> accountInfoDTOList = new ArrayList<>();
+        accountInfoDTOList.add(new AccountInfoDTO(principal.getName(), 1000));
+        when(accountService.getAccountDetails(testLogin)).thenReturn(accountInfoDTOList);
 
         mockMvc.perform(get("/myCloud/account/details").principal(principal))
                 .andExpect(status().isOk())

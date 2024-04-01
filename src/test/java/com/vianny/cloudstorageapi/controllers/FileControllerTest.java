@@ -1,8 +1,8 @@
 package com.vianny.cloudstorageapi.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vianny.cloudstorageapi.dto.ObjectDetailsDTO;
-import com.vianny.cloudstorageapi.dto.ObjectsInfoDTO;
+import com.vianny.cloudstorageapi.dto.response.object.ObjectDetailsDTO;
+import com.vianny.cloudstorageapi.dto.response.object.ObjectInfoMiniDTO;
 import com.vianny.cloudstorageapi.enums.TypeObject;
 import com.vianny.cloudstorageapi.exception.handlers.CustomExceptionHandler;
 import com.vianny.cloudstorageapi.exception.requiredException.ConflictRequiredException;
@@ -197,13 +197,13 @@ public class FileControllerTest {
     // Тестирование всех случаев метода "getFiles"
     @Test
     void testGetFiles() throws Exception {
-        List<ObjectsInfoDTO> objectsInfoDTOS = new ArrayList<>();
-        ObjectsInfoDTO objectInfo1 = new ObjectsInfoDTO(filename, TypeObject.File);
-        ObjectsInfoDTO objectInfo2 = new ObjectsInfoDTO(foldername, TypeObject.Folder);
-        objectsInfoDTOS.add(objectInfo1);
-        objectsInfoDTOS.add(objectInfo2);
+        List<ObjectInfoMiniDTO> objectInfoMiniDTOS = new ArrayList<>();
+        ObjectInfoMiniDTO objectInfo1 = new ObjectInfoMiniDTO(filename, TypeObject.File);
+        ObjectInfoMiniDTO objectInfo2 = new ObjectInfoMiniDTO(foldername, TypeObject.Folder);
+        objectInfoMiniDTOS.add(objectInfo1);
+        objectInfoMiniDTOS.add(objectInfo2);
 
-        when(objectService.getObjectsName(eq(full_directory), eq(principal.getName()))).thenReturn(objectsInfoDTOS);
+        when(objectService.getObjectsName(eq(full_directory), eq(principal.getName()))).thenReturn(objectInfoMiniDTOS);
 
         mockMvc.perform(get("/myCloud/")
                         .param("path", path)

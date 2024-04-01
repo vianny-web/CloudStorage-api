@@ -1,7 +1,7 @@
 package com.vianny.cloudstorageapi.controllers;
 
 import com.vianny.cloudstorageapi.dto.request.jwt.RequestJWT;
-import com.vianny.cloudstorageapi.dto.response.ResponseMessage;
+import com.vianny.cloudstorageapi.dto.response.message.ResponseMainMessage;
 import com.vianny.cloudstorageapi.dto.authentication.SignInRequest;
 import com.vianny.cloudstorageapi.dto.authentication.SignUpRequest;
 import com.vianny.cloudstorageapi.exception.requiredException.ServerErrorRequiredException;
@@ -87,8 +87,8 @@ public class SecurityController {
             throw new ServerErrorRequiredException(e.getMessage());
         }
 
-        ResponseMessage responseMessage = new ResponseMessage(HttpStatus.CREATED, "Successfully");
-        return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
+        ResponseMainMessage responseMainMessage = new ResponseMainMessage(HttpStatus.CREATED, "Successfully");
+        return new ResponseEntity<>(responseMainMessage, HttpStatus.CREATED);
     }
 
     @PostMapping("/signIn")

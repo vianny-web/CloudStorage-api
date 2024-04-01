@@ -1,7 +1,7 @@
 package com.vianny.cloudstorageapi.controllers;
 
-import com.vianny.cloudstorageapi.dto.AccountDTO;
-import com.vianny.cloudstorageapi.dto.response.ResponseAccountDetails;
+import com.vianny.cloudstorageapi.dto.response.account.AccountInfoDTO;
+import com.vianny.cloudstorageapi.dto.response.account.ResponseAccountInfo;
 import com.vianny.cloudstorageapi.exception.requiredException.NoStorageSpaceRequiredException;
 import com.vianny.cloudstorageapi.exception.requiredException.ServerErrorRequiredException;
 import com.vianny.cloudstorageapi.services.AccountService;
@@ -25,10 +25,10 @@ public class AccountController {
     }
 
     @GetMapping("/account/details")
-    public ResponseEntity<ResponseAccountDetails<List<AccountDTO>>> getPropertiesAccount(Principal principal) {
+    public ResponseEntity<ResponseAccountInfo<List<AccountInfoDTO>>> getPropertiesAccount(Principal principal) {
         try {
-            List<AccountDTO> accountDetails = accountService.getAccountDetails(principal.getName());
-            ResponseAccountDetails<List<AccountDTO>> dataObject = new ResponseAccountDetails<>(HttpStatus.FOUND, accountDetails);
+            List<AccountInfoDTO> accountDetails = accountService.getAccountDetails(principal.getName());
+            ResponseAccountInfo<List<AccountInfoDTO>> dataObject = new ResponseAccountInfo<>(HttpStatus.FOUND, accountDetails);
             return new ResponseEntity<>(dataObject,HttpStatus.OK);
         }
         catch (NoStorageSpaceRequiredException e) {

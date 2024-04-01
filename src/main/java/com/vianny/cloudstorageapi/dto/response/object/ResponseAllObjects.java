@@ -1,4 +1,4 @@
-package com.vianny.cloudstorageapi.dto.response;
+package com.vianny.cloudstorageapi.dto.response.object;
 
 import org.springframework.http.HttpStatus;
 

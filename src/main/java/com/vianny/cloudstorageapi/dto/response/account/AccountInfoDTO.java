@@ -1,10 +1,10 @@
-package com.vianny.cloudstorageapi.dto;
+package com.vianny.cloudstorageapi.dto.response.account;
 
-public class AccountDTO {
+public class AccountInfoDTO {
     private String login;
     private int sizeStorage;
 
-    public AccountDTO(String login, int sizeStorage) {
+    public AccountInfoDTO(String login, int sizeStorage) {
         this.login = login;
         this.sizeStorage = sizeStorage;
     }
