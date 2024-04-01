@@ -52,7 +52,7 @@ class ObjectServiceTest {
                 .thenReturn(objectDetails);
         Mockito.when(objectRepository.getObjectDetailsByObjectLocation("file", TypeObject.File, fullDirectory, principal.getName())).thenReturn(objectDetailsDTOS);
 
-        List<ObjectDetailsDTO> result = objectService.getObject("file", fullDirectory, principal.getName());
+        List<ObjectDetailsDTO> result = objectService.getObjectFromPath("file", fullDirectory, principal.getName());
 
         assertEquals(objectDetailsDTOS, result);
     }
@@ -61,7 +61,7 @@ class ObjectServiceTest {
         Mockito.when(objectRepository.findObjectDetailsByType("file", TypeObject.File, fullDirectory, principal.getName()))
                 .thenReturn(null);
 
-        assertThrows(NotFoundRequiredException.class,() -> objectService.getObject("file", fullDirectory, principal.getName()));
+        assertThrows(NotFoundRequiredException.class,() -> objectService.getObjectFromPath("file", fullDirectory, principal.getName()));
     }
 
 
@@ -81,7 +81,7 @@ class ObjectServiceTest {
 
         Mockito.when(objectRepository.getObjectsNameByObjectLocation(fullDirectory, principal.getName())).thenReturn(objectInfoMiniDTOS);
 
-        List<ObjectInfoMiniDTO> objects = objectService.getObjectsName(fullDirectory, principal.getName());
+        List<ObjectInfoMiniDTO> objects = objectService.getAllObjectsFromPath(fullDirectory, principal.getName());
 
         assertEquals(objectInfoMiniDTOS, objects);
     }
@@ -92,7 +92,7 @@ class ObjectServiceTest {
 
         Mockito.when(objectRepository.getObjectsNameByObjectLocation(fullDirectory, principal.getName())).thenReturn(objectInfoMiniDTOS);
 
-        List<ObjectInfoMiniDTO> objects = objectService.getObjectsName(fullDirectory, principal.getName());
+        List<ObjectInfoMiniDTO> objects = objectService.getAllObjectsFromPath(fullDirectory, principal.getName());
 
         assertEquals(objectInfoMiniDTOS, objects);
     }

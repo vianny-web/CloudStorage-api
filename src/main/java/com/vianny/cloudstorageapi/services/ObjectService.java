@@ -20,14 +20,14 @@ public class ObjectService {
     }
 
     @Transactional
-    public List<ObjectDetailsDTO> getObject(String filename, String fullDirectory, String login) {
+    public List<ObjectDetailsDTO> getObjectFromPath(String filename, String fullDirectory, String login) {
         if (objectRepository.findObjectDetailsByType(filename, TypeObject.File, fullDirectory, login) == null) {
             throw new NotFoundRequiredException("File with this name is not found");
         }
         return objectRepository.getObjectDetailsByObjectLocation(filename, TypeObject.File, fullDirectory, login);
     }
     @Transactional
-    public List<ObjectInfoMiniDTO> getObjectsName(String fullDirectory, String login) {
+    public List<ObjectInfoMiniDTO> getAllObjectsFromPath(String fullDirectory, String login) {
         return objectRepository.getObjectsNameByObjectLocation(fullDirectory, login);
     }
 

@@ -102,7 +102,7 @@ public class FileController {
         try {
             fullDirectory = principal.getName() + "/" + path;
 
-            List<ObjectDetailsDTO> objectDetails = objectService.getObject(filename, fullDirectory, principal.getName());
+            List<ObjectDetailsDTO> objectDetails = objectService.getObjectFromPath(filename, fullDirectory, principal.getName());
             ResponseObjectInfo<List<ObjectDetailsDTO>> dataObject = new ResponseObjectInfo<>(HttpStatus.FOUND, objectDetails);
             return new ResponseEntity<>(dataObject, HttpStatus.FOUND);
 
@@ -120,7 +120,7 @@ public class FileController {
         try {
             fullDirectory = principal.getName() + "/" + path;
 
-            List<ObjectInfoMiniDTO> objects = objectService.getObjectsName(fullDirectory, principal.getName());
+            List<ObjectInfoMiniDTO> objects = objectService.getAllObjectsFromPath(fullDirectory, principal.getName());
             ResponseAllObjects<List<ObjectInfoMiniDTO>> responseAllObjects = new ResponseAllObjects<>(HttpStatus.FOUND, objects);
 
             return new ResponseEntity<>(responseAllObjects,HttpStatus.FOUND);

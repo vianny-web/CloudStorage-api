@@ -167,7 +167,7 @@ public class FileControllerTest {
         ObjectDetailsDTO objectDetails = new ObjectDetailsDTO(filename, TypeObject.File, full_directory, size, time);
         objectDetailsList.add(objectDetails);
 
-        when(objectService.getObject(eq(filename), eq(full_directory), eq(principal.getName()))).thenReturn(objectDetailsList);
+        when(objectService.getObjectFromPath(eq(filename), eq(full_directory), eq(principal.getName()))).thenReturn(objectDetailsList);
 
         mockMvc.perform(get("/myCloud/propertiesFile")
                         .param("path", path)
@@ -180,11 +180,11 @@ public class FileControllerTest {
                 .andExpect(jsonPath("$.properties[0].objectLocation").value(full_directory))
                 .andExpect(jsonPath("$.properties[0].objectSize").value(size));
 
-        verify(objectService, times(1)).getObject(eq(filename), eq(full_directory), eq(principal.getName()));
+        verify(objectService, times(1)).getObjectFromPath(eq(filename), eq(full_directory), eq(principal.getName()));
     }
     @Test
     void testGetPropertiesFile_NotFoundRequiredException() throws Exception {
-        doThrow(NotFoundRequiredException.class).when(objectService).getObject(filename, full_directory, principal.getName());
+        doThrow(NotFoundRequiredException.class).when(objectService).getObjectFromPath(filename, full_directory, principal.getName());
 
         mockMvc.perform(get("/myCloud/propertiesFile")
                         .param("path", path)
@@ -203,7 +203,7 @@ public class FileControllerTest {
         objectInfoMiniDTOS.add(objectInfo1);
         objectInfoMiniDTOS.add(objectInfo2);
 
-        when(objectService.getObjectsName(eq(full_directory), eq(principal.getName()))).thenReturn(objectInfoMiniDTOS);
+        when(objectService.getAllObjectsFromPath(eq(full_directory), eq(principal.getName()))).thenReturn(objectInfoMiniDTOS);
 
         mockMvc.perform(get("/myCloud/")
                         .param("path", path)
@@ -215,7 +215,7 @@ public class FileControllerTest {
                 .andExpect(jsonPath("$.objects[1].objectName").value(foldername))
                 .andExpect(jsonPath("$.objects[1].objectType").value(TypeObject.Folder.toString()));
 
-        verify(objectService, times(1)).getObjectsName(eq(full_directory), eq(principal.getName()));
+        verify(objectService, times(1)).getAllObjectsFromPath(eq(full_directory), eq(principal.getName()));
     }
 
 
