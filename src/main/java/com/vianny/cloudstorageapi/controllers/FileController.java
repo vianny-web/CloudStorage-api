@@ -5,6 +5,7 @@ import com.vianny.cloudstorageapi.dto.response.object.ObjectInfoMiniDTO;
 import com.vianny.cloudstorageapi.dto.response.object.ResponseAllObjects;
 import com.vianny.cloudstorageapi.dto.response.message.ResponseMainMessage;
 import com.vianny.cloudstorageapi.dto.response.object.ResponseObjectInfo;
+import com.vianny.cloudstorageapi.enums.TypeObject;
 import com.vianny.cloudstorageapi.exception.requiredException.*;
 import com.vianny.cloudstorageapi.services.*;
 import io.minio.errors.*;
@@ -98,11 +99,11 @@ public class FileController {
     }
 
     @GetMapping("/propertiesFile")
-    public ResponseEntity<ResponseObjectInfo<List<ObjectDetailsDTO>>> getPropertiesFile(@RequestParam("path") String path, @RequestParam("filename") @NotBlank String filename, Principal principal) {
+    public ResponseEntity<ResponseObjectInfo<List<ObjectDetailsDTO>>> getPropertiesFile(@RequestParam("path") String path, @RequestParam("type") TypeObject typeObject, @RequestParam("objectName") @NotBlank String objectName, Principal principal) {
         try {
             fullDirectory = principal.getName() + "/" + path;
 
-            List<ObjectDetailsDTO> objectDetails = objectService.getObjectFromPath(filename, fullDirectory, principal.getName());
+            List<ObjectDetailsDTO> objectDetails = objectService.getObjectFromPath(objectName, typeObject, fullDirectory, principal.getName());
             ResponseObjectInfo<List<ObjectDetailsDTO>> dataObject = new ResponseObjectInfo<>(HttpStatus.FOUND, objectDetails);
             return new ResponseEntity<>(dataObject, HttpStatus.FOUND);
 
