@@ -135,9 +135,9 @@ public class ObjectControllerTest {
     }
 
 
-//    // Тестирование всех случаев метода "getFiles"
+//    // Тестирование всех случаев метода "getObjectsFromPath"
     @Test
-    void testGetFiles() throws Exception {
+    void testGetObjectsFromPath() throws Exception {
         List<ObjectInfoMiniDTO> objectInfoMiniDTOS = new ArrayList<>();
         ObjectInfoMiniDTO objectInfo1 = new ObjectInfoMiniDTO(filename, TypeObject.File);
         ObjectInfoMiniDTO objectInfo2 = new ObjectInfoMiniDTO(foldername, TypeObject.Folder);
@@ -160,7 +160,7 @@ public class ObjectControllerTest {
     }
 
 
-//    // Тестирование всех случаев метода "getFilesByName"
+//    // Тестирование всех случаев метода "getObjectsByName"
     @Test
     void testGetFilesByName() throws Exception {
         List<ObjectDetailsDTO> objectDetailsDTOS = new ArrayList<>();

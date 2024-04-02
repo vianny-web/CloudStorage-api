@@ -32,7 +32,7 @@ public class ObjectController {
     String fullDirectory;
 
     @GetMapping("/propertiesFile")
-    public ResponseEntity<ResponseObjectInfo<List<ObjectDetailsDTO>>> getPropertiesFile(@RequestParam("path") String path, @RequestParam("type") TypeObject typeObject, @RequestParam("objectName") @NotBlank String objectName, Principal principal) {
+    public ResponseEntity<ResponseObjectInfo<List<ObjectDetailsDTO>>> getPropertiesObject(@RequestParam("path") String path, @RequestParam("type") TypeObject typeObject, @RequestParam("objectName") @NotBlank String objectName, Principal principal) {
         try {
             fullDirectory = principal.getName() + "/" + path;
 
@@ -50,7 +50,7 @@ public class ObjectController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<ResponseAllObjects<List<ObjectInfoMiniDTO>>> getFilesFromPath(@RequestParam("path") String path, Principal principal) {
+    public ResponseEntity<ResponseAllObjects<List<ObjectInfoMiniDTO>>> getObjectsFromPath(@RequestParam("path") String path, Principal principal) {
         try {
             fullDirectory = principal.getName() + "/" + path;
 
@@ -64,7 +64,7 @@ public class ObjectController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<ResponseAllObjects<List<ObjectDetailsDTO>>> getFilesByName(@RequestParam("objectName") @NotBlank String objectName, Principal principal) {
+    public ResponseEntity<ResponseAllObjects<List<ObjectDetailsDTO>>> getObjectsByName(@RequestParam("objectName") @NotBlank String objectName, Principal principal) {
         try {
             List<ObjectDetailsDTO> objects = objectService.getObjectsByName_search(objectName, principal.getName());
             ResponseAllObjects<List<ObjectDetailsDTO>> responseAllObjects = new ResponseAllObjects<>(HttpStatus.FOUND, objects);
