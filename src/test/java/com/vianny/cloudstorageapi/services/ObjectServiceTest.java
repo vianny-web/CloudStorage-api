@@ -39,9 +39,10 @@ class ObjectServiceTest {
         fullDirectory = principal.getName() + "/" + "files/";
     }
 
-    // Тестирование всех случаев метода "getObject"
+
+    // Тестирование всех случаев метода "getObjectFromPath"
     @Test
-    void testGetObject() {
+    void testGetObjectFromPath_file() {
         List<ObjectDetailsDTO> objectDetailsDTOS = new ArrayList<>();
         ObjectDetailsDTO file1 = new ObjectDetailsDTO("file", TypeObject.File, fullDirectory, 10, LocalDateTime.now());
         objectDetailsDTOS.add(file1);
@@ -52,22 +53,48 @@ class ObjectServiceTest {
                 .thenReturn(objectDetails);
         Mockito.when(objectRepository.getObjectDetailsByObjectLocation("file", TypeObject.File, fullDirectory, principal.getName())).thenReturn(objectDetailsDTOS);
 
-        List<ObjectDetailsDTO> result = objectService.getObjectFromPath("file", fullDirectory, principal.getName());
+        List<ObjectDetailsDTO> result = objectService.getObjectFromPath("file", TypeObject.File, fullDirectory, principal.getName());
 
         assertEquals(objectDetailsDTOS, result);
     }
+
     @Test
-    void testGetObject_NotFoundRequiredException() {
+    void testGetObjectFromPath_folder() {
+        List<ObjectDetailsDTO> objectDetailsDTOS = new ArrayList<>();
+        ObjectDetailsDTO file1 = new ObjectDetailsDTO("folder", TypeObject.Folder, fullDirectory, 0, LocalDateTime.now());
+        objectDetailsDTOS.add(file1);
+
+            ObjectDetails objectDetails = new ObjectDetails("folder", TypeObject.Folder, 0,fullDirectory, LocalDateTime.now());
+
+        Mockito.when(objectRepository.findObjectDetailsByType("folder", TypeObject.Folder, fullDirectory, principal.getName()))
+                .thenReturn(objectDetails);
+        Mockito.when(objectRepository.getObjectDetailsByObjectLocation("folder", TypeObject.Folder, fullDirectory, principal.getName())).thenReturn(objectDetailsDTOS);
+
+        List<ObjectDetailsDTO> result = objectService.getObjectFromPath("folder", TypeObject.Folder, fullDirectory, principal.getName());
+
+        assertEquals(objectDetailsDTOS, result);
+    }
+
+    @Test
+    void testGetObjectFromPath_file_NotFoundRequiredException() {
         Mockito.when(objectRepository.findObjectDetailsByType("file", TypeObject.File, fullDirectory, principal.getName()))
                 .thenReturn(null);
 
-        assertThrows(NotFoundRequiredException.class,() -> objectService.getObjectFromPath("file", fullDirectory, principal.getName()));
+        assertThrows(NotFoundRequiredException.class,() -> objectService.getObjectFromPath("file", TypeObject.File, fullDirectory, principal.getName()));
+    }
+
+    @Test
+    void testGetObjectFromPath_folder_NotFoundRequiredException() {
+        Mockito.when(objectRepository.findObjectDetailsByType("folder", TypeObject.Folder, fullDirectory, principal.getName()))
+                .thenReturn(null);
+
+        assertThrows(NotFoundRequiredException.class,() -> objectService.getObjectFromPath("folder", TypeObject.Folder, fullDirectory, principal.getName()));
     }
 
 
-    // Тестирование всех случаев метода "getObjectsName"
+    // Тестирование всех случаев метода "getAllObjectsFromPath"
     @Test
-    void testGetObjectsName() {
+    void testGetAllObjectsFromPath() {
         List<ObjectInfoMiniDTO> objectInfoMiniDTOS = new ArrayList<>();
         ObjectInfoMiniDTO file1 = new ObjectInfoMiniDTO("file-1", TypeObject.File);
         ObjectInfoMiniDTO file2 = new ObjectInfoMiniDTO("file-2", TypeObject.File);
@@ -87,7 +114,7 @@ class ObjectServiceTest {
     }
 
     @Test
-    void testGetObjectsName_empty() {
+    void testGetAllObjectsFromPath_empty() {
         List<ObjectInfoMiniDTO> objectInfoMiniDTOS = new ArrayList<>();
 
         Mockito.when(objectRepository.getObjectsNameByObjectLocation(fullDirectory, principal.getName())).thenReturn(objectInfoMiniDTOS);
