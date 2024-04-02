@@ -44,8 +44,6 @@ public class FileControllerTest {
     @Mock
     private FileService fileService;
     @Mock
-    private ObjectService objectService;
-    @Mock
     private FileTransferService fileTransferService;
     @Mock
     private AccountService accountService;
@@ -57,7 +55,7 @@ public class FileControllerTest {
     private ObjectMapper objectMapper;
 
     MockMultipartFile file;
-    String path, filename, foldername, full_directory;
+    String path, filename, full_directory;
     int size;
     LocalDateTime time;
     Principal principal;
@@ -74,7 +72,6 @@ public class FileControllerTest {
         principal = () -> "user";
 
         filename = "file.txt";
-        foldername = "photos";
         full_directory = "user/files/";
         size = 1000;
         time = LocalDateTime.now();
@@ -160,65 +157,6 @@ public class FileControllerTest {
     }
 
 
-    // Тестирование всех случаев метода "getPropertiesFile"
-    @Test
-    void testGetPropertiesFile() throws Exception {
-        List<ObjectDetailsDTO> objectDetailsList = new ArrayList<>();
-        ObjectDetailsDTO objectDetails = new ObjectDetailsDTO(filename, TypeObject.File, full_directory, size, time);
-        objectDetailsList.add(objectDetails);
-
-        when(objectService.getObjectFromPath(eq(filename), eq(full_directory), eq(principal.getName()))).thenReturn(objectDetailsList);
-
-        mockMvc.perform(get("/myCloud/propertiesFile")
-                        .param("path", path)
-                        .param("filename", filename)
-                        .principal(principal))
-                .andExpect(status().isFound())
-                .andExpect(jsonPath("$.httpStatus").value("FOUND"))
-                .andExpect(jsonPath("$.properties[0].objectName").value(filename))
-                .andExpect(jsonPath("$.properties[0].objectType").value(TypeObject.File.toString()))
-                .andExpect(jsonPath("$.properties[0].objectLocation").value(full_directory))
-                .andExpect(jsonPath("$.properties[0].objectSize").value(size));
-
-        verify(objectService, times(1)).getObjectFromPath(eq(filename), eq(full_directory), eq(principal.getName()));
-    }
-    @Test
-    void testGetPropertiesFile_NotFoundRequiredException() throws Exception {
-        doThrow(NotFoundRequiredException.class).when(objectService).getObjectFromPath(filename, full_directory, principal.getName());
-
-        mockMvc.perform(get("/myCloud/propertiesFile")
-                        .param("path", path)
-                        .param("filename", filename)
-                        .principal(() -> principal.getName()))
-                .andExpect(status().isNotFound());
-    }
-
-
-    // Тестирование всех случаев метода "getFiles"
-    @Test
-    void testGetFiles() throws Exception {
-        List<ObjectInfoMiniDTO> objectInfoMiniDTOS = new ArrayList<>();
-        ObjectInfoMiniDTO objectInfo1 = new ObjectInfoMiniDTO(filename, TypeObject.File);
-        ObjectInfoMiniDTO objectInfo2 = new ObjectInfoMiniDTO(foldername, TypeObject.Folder);
-        objectInfoMiniDTOS.add(objectInfo1);
-        objectInfoMiniDTOS.add(objectInfo2);
-
-        when(objectService.getAllObjectsFromPath(eq(full_directory), eq(principal.getName()))).thenReturn(objectInfoMiniDTOS);
-
-        mockMvc.perform(get("/myCloud/")
-                        .param("path", path)
-                        .principal(principal))
-                .andExpect(status().isFound())
-                .andExpect(jsonPath("$.httpStatus").value("FOUND"))
-                .andExpect(jsonPath("$.objects[0].objectName").value(filename))
-                .andExpect(jsonPath("$.objects[0].objectType").value(TypeObject.File.toString()))
-                .andExpect(jsonPath("$.objects[1].objectName").value(foldername))
-                .andExpect(jsonPath("$.objects[1].objectType").value(TypeObject.Folder.toString()));
-
-        verify(objectService, times(1)).getAllObjectsFromPath(eq(full_directory), eq(principal.getName()));
-    }
-
-
     // Тестирование всех случаев метода "deleteFile"
     @Test
     void testDeleteFile() throws Exception {
@@ -244,29 +182,4 @@ public class FileControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    // Тестирование всех случаев метода "getFilesByName"
-    @Test
-    void testGetFilesByName() throws Exception {
-        List<ObjectDetailsDTO> objectDetailsDTOS = new ArrayList<>();
-        ObjectDetailsDTO file1 = new ObjectDetailsDTO("file", TypeObject.File, "", 10, LocalDateTime.now());
-        ObjectDetailsDTO file2 = new ObjectDetailsDTO("file", TypeObject.File, "files/", 10, LocalDateTime.now());
-        ObjectDetailsDTO file3 = new ObjectDetailsDTO("file", TypeObject.Folder, "files/", 10, LocalDateTime.now());
-
-        objectDetailsDTOS.add(file1);
-        objectDetailsDTOS.add(file2);
-        objectDetailsDTOS.add(file3);
-
-        when(objectService.getObjectsByName_search("file", principal.getName())).thenReturn(objectDetailsDTOS);
-
-        mockMvc.perform(get("/myCloud/search")
-                        .principal(principal)
-                        .param("objectName", "file"))
-                .andExpect(status().isFound())
-                .andExpect(jsonPath("$.httpStatus", is("FOUND")))
-                        .andExpect((jsonPath("$.objects[0].objectName", is("file"))))
-                        .andExpect((jsonPath("$.objects[1].objectName", is("file"))))
-                        .andExpect((jsonPath("$.objects[2].objectName", is("file"))));
-
-        verify(objectService, times(1)).getObjectsByName_search("file", principal.getName());
-    }
 }
