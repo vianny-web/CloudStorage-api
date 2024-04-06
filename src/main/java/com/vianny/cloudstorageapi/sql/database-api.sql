@@ -1,1 +1,0 @@
-CREATE database cloud_storage_db;
